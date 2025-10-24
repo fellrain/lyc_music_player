@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "lyc_music_player",
+  "version": "1.1.0",
+  "name": "LYC Music Player",
+  "description": "落雨川的网易云音乐播放Mod",
+  "authors": ["落雨川"],
+  "contact": {
+    "homepage": "",
+    "sources": ""
+  },
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["com.rain.MusicPlayerMod"]
+  },
+  "mixins": [
+    "Lyc_Music_Player.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.15.0",
+    "minecraft": "~1.21.8",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
