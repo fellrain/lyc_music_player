@@ -3,6 +3,7 @@ package com.rain.network;
 import com.rain.MusicPlayerMod;
 import com.rain.config.ModConfig;
 import com.rain.manager.CookieManager;
+import com.rain.model.Lyric;
 import com.rain.model.MusicTrack;
 import com.rain.model.SearchResult;
 import com.rain.util.CollUtil;
@@ -51,6 +52,24 @@ public final class MusicAPIClient {
             } catch (Exception e) {
                 MusicPlayerMod.LOGGER.error("搜索音乐失败", e);
                 return new SearchResult(query, new ArrayList<>(), 0);
+            }
+        });
+    }
+
+    /**
+     * 获取歌词
+     */
+    public CompletableFuture<com.rain.model.Lyric> getLyric(String trackId) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                String url = apiBaseUrl + "/lyric/new?id=" + HttpUtil.encodeParam(trackId);
+                Map<String, String> headers = buildHeaders();
+                MusicPlayerMod.LOGGER.info("获取歌词: {}", trackId);
+                String responseBody = HttpUtil.get(url, headers);
+                return parseLyricResponse(responseBody);
+            } catch (Exception e) {
+                MusicPlayerMod.LOGGER.error("获取歌词失败", e);
+                return null;
             }
         });
     }
@@ -212,6 +231,36 @@ public final class MusicAPIClient {
             return resMap;
         } catch (Exception e) {
             MusicPlayerMod.LOGGER.error("解析歌曲详情响应失败", e);
+            return null;
+        }
+    }
+
+    /**
+     * 解析歌词响应
+     */
+    private Lyric parseLyricResponse(String responseBody) {
+        try {
+            JSONObject json = new JSONObject(responseBody);
+            if (!(json.optInt("code") == API_SUCCESS_CODE)) {
+                return null;
+            }
+            // 获取原文歌词
+            String lrcContent = "";
+            JSONObject lrcObj = json.optJSONObject("lrc");
+            if (!Objects.isNull(lrcObj)) {
+                lrcContent = lrcObj.optString("lyric", "");
+            }
+            
+            // 获取翻译歌词
+            String translationContent = "";
+            JSONObject tLrcObj = json.optJSONObject("tlyric");
+            if (!Objects.isNull(tLrcObj)) {
+                translationContent = tLrcObj.optString("lyric", "");
+            }
+            
+            return new Lyric(lrcContent, translationContent);
+        } catch (Exception e) {
+            MusicPlayerMod.LOGGER.error("解析歌词响应失败", e);
             return null;
         }
     }

@@ -17,7 +17,7 @@ public final class ModConfig {
     /**
      * API URL
      */
-    public static final String SEARCH_API_URL = "这里填写你的API路径";
+    public static final String SEARCH_API_URL = "https://ncm.zhenxin.me";
 
     /**
      * API读取超时时间（毫秒）

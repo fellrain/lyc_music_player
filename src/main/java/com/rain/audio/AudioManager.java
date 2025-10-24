@@ -51,6 +51,12 @@ public final class AudioManager {
 
     private InputStream currentStream;
 
+    private long playStartTime;
+
+    private long pausedPosition;
+
+    private Runnable onTrackStartCallback;
+
     public AudioManager() {
         this.audioThread = Executors.newSingleThreadExecutor(r -> new Thread(r, THREAD_NAME));
         MusicPlayerMod.LOGGER.info("音频管理器已使用JLayer初始化");
@@ -59,6 +65,7 @@ public final class AudioManager {
     public void playTrack(MusicTrack track) {
         stop();
         this.currentTrack = track;
+        this.pausedPosition = 0;
         playbackTask = audioThread.submit(() -> {
             try {
                 URL url = new URL(track.getUrl());
@@ -80,11 +87,16 @@ public final class AudioManager {
                     }
                 });
                 isPlaying.set(true);
+                playStartTime = System.currentTimeMillis();
                 MinecraftClient.getInstance().execute(() -> {
                     if (!Objects.isNull(MinecraftClient.getInstance().player)) {
                         MinecraftClient.getInstance().player.sendMessage(
                                 net.minecraft.text.Text.literal("§a正在播放: §f" + track.getTitle() + " - " + track.getArtist()), true
                         );
+                    }
+                    // 触发播放开始回调
+                    if (!Objects.isNull(onTrackStartCallback)) {
+                        onTrackStartCallback.run();
                     }
                 });
                 player.play();
@@ -111,6 +123,8 @@ public final class AudioManager {
     public void stop() {
         isPlaying.set(false);
         isPaused.set(false);
+        pausedPosition = 0;
+        playStartTime = 0;
         if (!Objects.isNull(player)) {
             try {
                 player.close();
@@ -147,7 +161,10 @@ public final class AudioManager {
     }
 
     public long getPosition() {
-        return 0;
+        if (isPlaying.get() && playStartTime > 0) {
+            return System.currentTimeMillis() - playStartTime + pausedPosition;
+        }
+        return pausedPosition;
     }
 
     public long getDuration() {
@@ -162,6 +179,10 @@ public final class AudioManager {
 
     public void setOnTrackEndCallback(Runnable callback) {
         this.onTrackEndCallback = callback;
+    }
+
+    public void setOnTrackStartCallback(Runnable callback) {
+        this.onTrackStartCallback = callback;
     }
 
     public void onTrackEnded() {

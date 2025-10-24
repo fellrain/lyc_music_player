@@ -1,4 +1,5 @@
 {
   "key.lycMusicPlayer.openGui": "Open Music Player",
-  "category.lyc_music_player.music_player": "Music Player"
+  "category.lyc_music_player.music_player": "Music Player",
+  "hud.lycMusicPlayer.noLyric": "No Lyrics Available"
 }

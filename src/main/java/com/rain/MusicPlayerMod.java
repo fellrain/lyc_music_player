@@ -3,6 +3,8 @@ package com.rain;
 import com.rain.audio.AudioManager;
 import com.rain.command.MusicCommands;
 import com.rain.gui.KeyBindings;
+import com.rain.gui.MusicHudRenderer;
+import com.rain.manager.LyricManager;
 import com.rain.manager.MusicManager;
 import com.rain.network.MusicAPIClient;
 import net.fabricmc.api.ClientModInitializer;
@@ -33,6 +35,10 @@ public final class MusicPlayerMod implements ClientModInitializer {
 
     private MusicManager musicManager;
 
+    private LyricManager lyricManager;
+
+    private MusicHudRenderer hudRenderer;
+
     /**
      * 客户端初始化方法
      */
@@ -41,14 +47,30 @@ public final class MusicPlayerMod implements ClientModInitializer {
         instance = this;
         LOGGER.info("初始化小落音乐播放器");
         try {
+            // 创建音频管理器（负责播放音乐）
             audioManager = new AudioManager();
+            // 创建音乐管理器（管理播放列表）
             musicManager = new MusicManager(audioManager);
+            // 创建API客户端（从网易云获取歌曲、歌词）
+            apiClient = new MusicAPIClient();
+            // 创建歌词管理器（解析和管理歌词）
+            lyricManager = new LyricManager(apiClient);
+            // 创建HUD渲染器（在游戏界面显示歌词）
+            hudRenderer = new MusicHudRenderer(audioManager, lyricManager);
+
             audioManager.setOnTrackEndCallback(() -> {
                 if (!musicManager.isPlaylistEmpty()) {
                     musicManager.playNext();
                 }
             });
-            apiClient = new MusicAPIClient();
+
+            // 设置播放开始回调，自动加载歌词
+            audioManager.setOnTrackStartCallback(() -> {
+                if (!Objects.isNull(audioManager.getCurrentTrack())) {
+                    lyricManager.loadLyric(audioManager.getCurrentTrack());
+                }
+            });
+
             ClientCommandRegistrationCallback.EVENT
                     .register((dispatcher, registryAccess)
                             -> MusicCommands.register(dispatcher));
@@ -85,6 +107,20 @@ public final class MusicPlayerMod implements ClientModInitializer {
      */
     public MusicManager getMusicManager() {
         return musicManager;
+    }
+
+    /**
+     * 获取歌词管理器
+     */
+    public LyricManager getLyricManager() {
+        return lyricManager;
+    }
+
+    /**
+     * 获取HUD渲染器
+     */
+    public MusicHudRenderer getHudRenderer() {
+        return hudRenderer;
     }
 
     /**
