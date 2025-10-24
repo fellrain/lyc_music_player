@@ -38,6 +38,8 @@ public class MusicPlayerScreen extends Screen {
         PLAYER("播放器"),
         SEARCH("搜索"),
         PLAYLIST("播放列表"),
+        FAVORITE("收藏"),
+        CATEGORY("分类"),
         SETTINGS("设置");
 
         final String name;
@@ -65,6 +67,8 @@ public class MusicPlayerScreen extends Screen {
         tabPanels.put(Tab.PLAYER, new PlayerTabPanel(audioManager, musicManager));
         tabPanels.put(Tab.SEARCH, new SearchTabPanel(audioManager, musicManager, apiClient));
         tabPanels.put(Tab.PLAYLIST, new PlaylistTabPanel(musicManager));
+        tabPanels.put(Tab.FAVORITE, new FavoriteTabPanel(audioManager, musicManager, apiClient));
+        tabPanels.put(Tab.CATEGORY, new CategoryTabPanel(audioManager, musicManager));
         tabPanels.put(Tab.SETTINGS, new SettingsTabPanel());
     }
 
@@ -80,13 +84,17 @@ public class MusicPlayerScreen extends Screen {
      */
     private void initTabButtons() {
         Tab[] tabs = Tab.values();
+        int totalTabs = tabs.length;
+        int totalWidth = this.width - 2 * UIConstants.PADDING;
+        int tabWidth = (totalWidth - (totalTabs - 1) * UIConstants.TAB_SPACING) / totalTabs;
+        
         for (int i = 0; i < tabs.length; i++) {
             Tab tab = tabs[i];
-            int tabX = UIConstants.PADDING + i * (UIConstants.TAB_WIDTH + UIConstants.TAB_SPACING);
+            int tabX = UIConstants.PADDING + i * (tabWidth + UIConstants.TAB_SPACING);
             this.addDrawableChild(ButtonWidget.builder(
                     Text.literal(tab.name),
                     button -> switchTab(tab)
-            ).dimensions(tabX, UIConstants.PADDING, UIConstants.TAB_WIDTH, UIConstants.BUTTON_HEIGHT).build());
+            ).dimensions(tabX, UIConstants.PADDING, tabWidth, UIConstants.BUTTON_HEIGHT).build());
         }
     }
 
@@ -137,6 +145,10 @@ public class MusicPlayerScreen extends Screen {
         }
         // 渲染控件（按钮等）
         super.render(context, mouseX, mouseY, delta);
+        
+        if (!Objects.isNull(currentPanel)) {
+            currentPanel.renderOverlay(context, mouseX, mouseY, delta);
+        }
     }
 
     @Override

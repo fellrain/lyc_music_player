@@ -4,8 +4,7 @@ import com.rain.audio.AudioManager;
 import com.rain.command.MusicCommands;
 import com.rain.gui.KeyBindings;
 import com.rain.gui.MusicHudRenderer;
-import com.rain.manager.LyricManager;
-import com.rain.manager.MusicManager;
+import com.rain.manager.*;
 import com.rain.network.MusicAPIClient;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -39,6 +38,12 @@ public final class MusicPlayerMod implements ClientModInitializer {
 
     private MusicHudRenderer hudRenderer;
 
+    private DataPersistenceManager persistenceManager;
+
+    private FavoriteManager favoriteManager;
+
+    private CategoryManager categoryManager;
+
     /**
      * 客户端初始化方法
      */
@@ -47,7 +52,9 @@ public final class MusicPlayerMod implements ClientModInitializer {
         instance = this;
         LOGGER.info("初始化小落音乐播放器");
         try {
-            // 创建音频管理器（负责播放音乐）
+            // 初始化持久化管理器
+            persistenceManager = new DataPersistenceManager();
+            // 初始化核心组件
             audioManager = new AudioManager();
             // 创建音乐管理器（管理播放列表）
             musicManager = new MusicManager(audioManager);
@@ -57,25 +64,33 @@ public final class MusicPlayerMod implements ClientModInitializer {
             lyricManager = new LyricManager(apiClient);
             // 创建HUD渲染器（在游戏界面显示歌词）
             hudRenderer = new MusicHudRenderer(audioManager, lyricManager);
-
+            // 初始化功能管理器
+            // 收藏管理器
+            favoriteManager = new FavoriteManager(persistenceManager);
+            // 分类管理器
+            categoryManager = new CategoryManager(persistenceManager);
+            // 初始化Cookie管理器并加载数据
+            CookieManager.getInstance().initialize(persistenceManager);
+            // 初始化音乐管理器并加载播放列表
+            musicManager.initialize(persistenceManager);
+            // 设置回调
             audioManager.setOnTrackEndCallback(() -> {
                 if (!musicManager.isPlaylistEmpty()) {
                     musicManager.playNext();
                 }
             });
-
             // 设置播放开始回调，自动加载歌词
             audioManager.setOnTrackStartCallback(() -> {
                 if (!Objects.isNull(audioManager.getCurrentTrack())) {
                     lyricManager.loadLyric(audioManager.getCurrentTrack());
                 }
             });
-
+            // 注册命令和键位
             ClientCommandRegistrationCallback.EVENT
                     .register((dispatcher, registryAccess)
                             -> MusicCommands.register(dispatcher));
-            // 注册键盘绑定
             KeyBindings.register();
+            LOGGER.info("小落音乐播放器初始化完成");
         } catch (Exception e) {
             LOGGER.error("初始化小落音乐播放器失败", e);
         }
@@ -121,6 +136,27 @@ public final class MusicPlayerMod implements ClientModInitializer {
      */
     public MusicHudRenderer getHudRenderer() {
         return hudRenderer;
+    }
+
+    /**
+     * 获取持久化管理器
+     */
+    public DataPersistenceManager getPersistenceManager() {
+        return persistenceManager;
+    }
+
+    /**
+     * 获取收藏管理器
+     */
+    public FavoriteManager getFavoriteManager() {
+        return favoriteManager;
+    }
+
+    /**
+     * 获取分类管理器
+     */
+    public CategoryManager getCategoryManager() {
+        return categoryManager;
     }
 
     /**

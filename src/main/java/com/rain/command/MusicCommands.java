@@ -50,8 +50,6 @@ public final class MusicCommands {
 
     public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
         dispatcher.register(literal("music")
-                .then(literal("gui")
-                        .executes(MusicCommands::openGui))
                 .then(literal("search")
                         .then(argument("query", StringArgumentType.greedyString())
                                 .executes(MusicCommands::searchMusic)))
@@ -346,7 +344,6 @@ public final class MusicCommands {
     private static int showHelp(CommandContext<FabricClientCommandSource> context) {
         FabricClientCommandSource source = context.getSource();
         source.sendFeedback(Text.literal("§a§l=== 音乐播放器命令帮助 ==="));
-        source.sendFeedback(Text.literal("§e/music gui §7- 打开音乐播放器GUI（或按M键）"));
         source.sendFeedback(Text.literal("§e/music search <关键词> §7- 搜索音乐"));
         source.sendFeedback(Text.literal("§e/music play <编号> §7- 播放指定歌曲"));
         source.sendFeedback(Text.literal("§e/music stop §7- 停止播放"));

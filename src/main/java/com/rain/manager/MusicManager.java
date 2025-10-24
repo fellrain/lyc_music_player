@@ -27,6 +27,8 @@ public final class MusicManager {
 
     private final Random random;
 
+    private DataPersistenceManager persistenceManager;
+
     /**
      * 构造音乐管理器
      *
@@ -42,6 +44,14 @@ public final class MusicManager {
     }
 
     /**
+     * 初始化持久化管理器
+     */
+    public void initialize(DataPersistenceManager persistenceManager) {
+        this.persistenceManager = persistenceManager;
+        loadPlaylist();
+    }
+
+    /**
      * 添加音轨到播放列表
      */
     public boolean addToPlaylist(MusicTrack track) {
@@ -49,7 +59,15 @@ public final class MusicManager {
             MusicPlayerMod.LOGGER.warn("播放列表已满");
             return false;
         }
+        // 检查是否已存在（根据歌曲ID）
+        for (MusicTrack existingTrack : playlist) {
+            if (existingTrack.getId().equals(track.getId())) {
+                MusicPlayerMod.LOGGER.info("歌曲已在播放列表中: {}", track.getTitle());
+                return false;
+            }
+        }
         playlist.add(track);
+        savePlaylist();
         MusicPlayerMod.LOGGER.info("已添加到播放列表: {}", track.getTitle());
         return true;
     }
@@ -65,6 +83,7 @@ public final class MusicManager {
         if (currentIndex >= index && currentIndex > 0) {
             currentIndex--;
         }
+        savePlaylist();
         return true;
     }
 
@@ -74,6 +93,7 @@ public final class MusicManager {
     public void clearPlaylist() {
         playlist.clear();
         currentIndex = -1;
+        savePlaylist();
         MusicPlayerMod.LOGGER.info("播放列表已清空");
     }
 
@@ -88,6 +108,7 @@ public final class MusicManager {
         currentIndex = index;
         MusicTrack track = playlist.get(currentIndex);
         audioManager.playTrack(track);
+        savePlaylist();
     }
 
     /**
@@ -140,6 +161,7 @@ public final class MusicManager {
         if (!Objects.isNull(currentTrack)) {
             currentIndex = playlist.indexOf(currentTrack);
         }
+        savePlaylist();
         MusicPlayerMod.LOGGER.info("播放列表已随机排序");
     }
 
@@ -187,5 +209,38 @@ public final class MusicManager {
         playbackMode = modes[nextIndex];
         MusicPlayerMod.LOGGER.info("播放模式已切换为: {}", playbackMode);
         return playbackMode;
+    }
+
+    /**
+     * 保存播放列表
+     */
+    private void savePlaylist() {
+        if (!Objects.isNull(persistenceManager)) {
+            persistenceManager.savePlaylist(playlist, currentIndex);
+        }
+    }
+
+    /**
+     * 加载播放列表
+     */
+    private void loadPlaylist() {
+        if (Objects.isNull(persistenceManager)) {
+            return;
+        }
+        Map<String, Object> data = persistenceManager.loadPlaylist();
+        if (Objects.isNull(data)) {
+            return;
+        }
+        @SuppressWarnings("unchecked")
+        List<MusicTrack> tracks = (List<MusicTrack>) data.get("tracks");
+        Integer savedIndex = (Integer) data.get("currentIndex");
+        if (!Objects.isNull(tracks)) {
+            playlist.clear();
+            playlist.addAll(tracks);
+        }
+        if (!Objects.isNull(savedIndex)) {
+            currentIndex = savedIndex;
+        }
+        MusicPlayerMod.LOGGER.info("播放列表已从本地加载，当前索引: {}", currentIndex);
     }
 }

@@ -164,7 +164,7 @@ public class PlayerTabPanel implements TabPanel {
         RenderHelper.drawCenteredColoredText(
                 drawContext, textRenderer,
                 status,
-                centerX, startY + 100,
+                centerX, startY + 123,
                 statusColor
         );
     }

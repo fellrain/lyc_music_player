@@ -107,7 +107,7 @@ public class SettingsTabPanel implements TabPanel {
         RenderHelper.drawCenteredColoredText(
                 drawContext, textRenderer,
                 "设置",
-                context.getWidth() / 2, startY - 20,
+                context.getWidth() / 2, startY - 8,
                 UIConstants.COLOR_PRIMARY
         );
         // 绘制Cookie标签

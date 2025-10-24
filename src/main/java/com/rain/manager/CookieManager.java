@@ -12,6 +12,7 @@ import java.util.Objects;
 public class CookieManager {
     private static volatile CookieManager instance;
     private String cookie = "";
+    private DataPersistenceManager persistenceManager;
 
     private CookieManager() {
     }
@@ -25,6 +26,14 @@ public class CookieManager {
             }
         }
         return instance;
+    }
+
+    /**
+     * 初始化持久化管理器
+     */
+    public void initialize(DataPersistenceManager persistenceManager) {
+        this.persistenceManager = persistenceManager;
+        loadCookie();
     }
 
     /**
@@ -43,6 +52,14 @@ public class CookieManager {
         } else {
             this.cookie = cookie.trim();
         }
+        // 持久化保存
+        if (!Objects.isNull(persistenceManager)) {
+            if (this.cookie.isEmpty()) {
+                persistenceManager.deleteCookie();
+            } else {
+                persistenceManager.saveCookie(this.cookie);
+            }
+        }
         MusicPlayerMod.LOGGER.info("Cookie已更新，长度: {}", this.cookie.length());
     }
 
@@ -51,6 +68,9 @@ public class CookieManager {
      */
     public void clearCookie() {
         this.cookie = "";
+        if (!Objects.isNull(persistenceManager)) {
+            persistenceManager.deleteCookie();
+        }
         MusicPlayerMod.LOGGER.info("Cookie已清除");
     }
 
@@ -59,5 +79,19 @@ public class CookieManager {
      */
     public boolean hasCookie() {
         return cookie != null && !cookie.isEmpty();
+    }
+
+    /**
+     * 从本地加载Cookie
+     */
+    private void loadCookie() {
+        if (Objects.isNull(persistenceManager)) {
+            return;
+        }
+        String loaded = persistenceManager.loadCookie();
+        if (!Objects.isNull(loaded) && !loaded.isEmpty()) {
+            this.cookie = loaded;
+            MusicPlayerMod.LOGGER.info("Cookie已从本地加载");
+        }
     }
 }

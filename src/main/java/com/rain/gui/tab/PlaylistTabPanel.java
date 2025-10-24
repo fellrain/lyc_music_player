@@ -1,7 +1,9 @@
 package com.rain.gui.tab;
 
+import com.rain.MusicPlayerMod;
 import com.rain.gui.constants.UIConstants;
 import com.rain.gui.util.RenderHelper;
+import com.rain.manager.FavoriteManager;
 import com.rain.manager.MusicManager;
 import com.rain.model.MusicTrack;
 import com.rain.util.CollUtil;
@@ -20,6 +22,7 @@ import java.util.List;
 public class PlaylistTabPanel implements TabPanel {
 
     private final MusicManager musicManager;
+    private final FavoriteManager favoriteManager;
     private TabPanelContext context;
     private TextRenderer textRenderer;
     private int playlistScrollOffset = 0;
@@ -29,6 +32,7 @@ public class PlaylistTabPanel implements TabPanel {
      */
     public PlaylistTabPanel(MusicManager musicManager) {
         this.musicManager = musicManager;
+        this.favoriteManager = MusicPlayerMod.getInstance().getFavoriteManager();
     }
 
     @Override
@@ -121,8 +125,24 @@ public class PlaylistTabPanel implements TabPanel {
                 UIConstants.PADDING + 5, itemY + 10,
                 textColor
         );
-        // 绘制删除按钮
+        // 绘制收藏和删除按钮
         if (isHovered) {
+            // 收藏按钮
+            boolean isFavorite = favoriteManager.isFavorite(track);
+            String favoriteText = isFavorite ? "♥" : "♡";
+            int favoriteColor = isFavorite ? UIConstants.COLOR_DANGER : UIConstants.COLOR_TEXT_SECONDARY;
+            int favoriteX = context.getWidth() - UIConstants.PADDING - 35;
+            if (mouseX >= favoriteX && mouseX <= favoriteX + 15) {
+                favoriteColor = UIConstants.COLOR_PRIMARY;
+            }
+            RenderHelper.drawColoredText(
+                    drawContext, textRenderer,
+                    favoriteText,
+                    favoriteX, itemY + 10,
+                    favoriteColor
+            );
+            
+            // 删除按钮
             RenderHelper.drawColoredText(
                     drawContext, textRenderer,
                     UIConstants.ICON_DELETE,
@@ -142,11 +162,21 @@ public class PlaylistTabPanel implements TabPanel {
         for (int i = playlistScrollOffset; i < playlist.size() && i < playlistScrollOffset + maxVisible; i++) {
             int itemY = listY + (i - playlistScrollOffset) * UIConstants.PLAYLIST_ITEM_HEIGHT;
             if (mouseY >= itemY && mouseY <= itemY + UIConstants.PLAYLIST_ITEM_HEIGHT - 2) {
+                MusicTrack track = playlist.get(i);
+                
+                // 点击收藏按钮
+                int favoriteX = context.getWidth() - UIConstants.PADDING - 35;
+                if (mouseX >= favoriteX && mouseX <= favoriteX + 15) {
+                    favoriteManager.toggleFavorite(track);
+                    return true;
+                }
+                
                 // 点击删除按钮
                 if (mouseX >= context.getWidth() - UIConstants.PADDING - 20) {
                     musicManager.removeFromPlaylist(i);
                     return true;
                 }
+                
                 // 点击歌曲区域，播放该歌曲
                 musicManager.playTrackAt(i);
                 return true;

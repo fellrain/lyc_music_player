@@ -62,4 +62,19 @@ public interface TabPanel {
      * @return 如果事件被处理返回true，否则返回false
      */
     boolean handleScroll(double mouseX, double mouseY, double verticalAmount);
+
+    /**
+     * 渲染覆盖层（模态弹窗等）
+     * <p>
+     * 在所有其他内容渲染后调用，确保模态弹窗显示在最上层。
+     * </p>
+     *
+     * @param drawContext 绘制上下文
+     * @param mouseX      鼠标X坐标
+     * @param mouseY      鼠标Y坐标
+     * @param delta       帧间隔时间
+     */
+    default void renderOverlay(DrawContext drawContext, int mouseX, int mouseY, float delta) {
+        // 默认实现：不渲染任何覆盖层
+    }
 }
