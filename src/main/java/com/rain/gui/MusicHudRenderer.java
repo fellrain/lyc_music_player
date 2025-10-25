@@ -80,8 +80,7 @@ public class MusicHudRenderer {
     private void renderLyrics(DrawContext context, TextRenderer textRenderer, int screenWidth, int baseY) {
         Lyric lyric = lyricManager.getCurrentLyric();
         if (Objects.isNull(lyric) || !lyric.hasLyric()) {
-            // 无歌词时显示提示
-            String noLyricText = "♪ 暂无歌词 ♪";
+            String noLyricText = "♬ 暂无歌词 ♬";
             int textWidth = textRenderer.getWidth(noLyricText);
             context.drawTextWithShadow(
                     textRenderer,

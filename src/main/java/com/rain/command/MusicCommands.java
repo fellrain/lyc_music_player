@@ -85,6 +85,13 @@ public final class MusicCommands {
                         .executes(MusicCommands::playPrevious))
                 .then(literal("mode")
                         .executes(MusicCommands::cyclePlaybackMode))
+                .then(literal("share")
+                        .then(literal("accept")
+                                .then(argument("sender", StringArgumentType.string())
+                                        .executes(MusicCommands::acceptShare)))
+                        .then(literal("reject")
+                                .then(argument("sender", StringArgumentType.string())
+                                        .executes(MusicCommands::rejectShare))))
                 .then(literal("help")
                         .executes(MusicCommands::showHelp))
         );
@@ -361,6 +368,28 @@ public final class MusicCommands {
         source.sendFeedback(Text.literal("§e/music playlist clear §7- 清空播放列表"));
         source.sendFeedback(Text.literal("§e/music playlist show §7- 显示播放列表"));
         source.sendFeedback(Text.literal("§e/music playlist shuffle §7- 随机播放播放列表"));
+        source.sendFeedback(Text.literal(""));
+        source.sendFeedback(Text.literal("§a§l分享命令:"));
+        source.sendFeedback(Text.literal("§e/music share accept <玩家名> §7- 接受音乐分享"));
+        source.sendFeedback(Text.literal("§e/music share reject <玩家名> §7- 拒绝音乐分享"));
+        return 1;
+    }
+
+    /**
+     * 接受音乐分享
+     */
+    private static int acceptShare(CommandContext<FabricClientCommandSource> context) {
+        String senderName = StringArgumentType.getString(context, "sender");
+        MusicPlayerMod.getInstance().getShareManager().acceptShare(senderName);
+        return 1;
+    }
+
+    /**
+     * 拒绝音乐分享
+     */
+    private static int rejectShare(CommandContext<FabricClientCommandSource> context) {
+        String senderName = StringArgumentType.getString(context, "sender");
+        MusicPlayerMod.getInstance().getShareManager().rejectShare(senderName);
         return 1;
     }
 

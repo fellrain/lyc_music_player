@@ -5,6 +5,7 @@ import com.rain.gui.constants.UIConstants;
 import com.rain.gui.util.RenderHelper;
 import com.rain.manager.FavoriteManager;
 import com.rain.manager.MusicManager;
+import com.rain.manager.MusicShareManager;
 import com.rain.model.MusicTrack;
 import com.rain.util.CollUtil;
 import net.minecraft.client.font.TextRenderer;
@@ -23,6 +24,7 @@ public class PlaylistTabPanel implements TabPanel {
 
     private final MusicManager musicManager;
     private final FavoriteManager favoriteManager;
+    private final MusicShareManager shareManager;
     private TabPanelContext context;
     private TextRenderer textRenderer;
     private int playlistScrollOffset = 0;
@@ -33,6 +35,7 @@ public class PlaylistTabPanel implements TabPanel {
     public PlaylistTabPanel(MusicManager musicManager) {
         this.musicManager = musicManager;
         this.favoriteManager = MusicPlayerMod.getInstance().getFavoriteManager();
+        this.shareManager = MusicPlayerMod.getInstance().getShareManager();
     }
 
     @Override
@@ -125,8 +128,21 @@ public class PlaylistTabPanel implements TabPanel {
                 UIConstants.PADDING + 5, itemY + 10,
                 textColor
         );
-        // 绘制收藏和删除按钮
         if (isHovered) {
+            // 分享按钮
+            String shareText = "[分享]";
+            int shareX = context.getWidth() - UIConstants.PADDING - 80,
+                    shareColor = UIConstants.COLOR_TEXT_SECONDARY;
+            if (mouseX >= shareX && mouseX <= shareX + textRenderer.getWidth(shareText)) {
+                shareColor = UIConstants.COLOR_PRIMARY;
+            }
+            RenderHelper.drawColoredText(
+                    drawContext, textRenderer,
+                    shareText,
+                    shareX, itemY + 10,
+                    shareColor
+            );
+
             // 收藏按钮
             boolean isFavorite = favoriteManager.isFavorite(track);
             String favoriteText = isFavorite ? "♥" : "♡";
@@ -141,7 +157,6 @@ public class PlaylistTabPanel implements TabPanel {
                     favoriteX, itemY + 10,
                     favoriteColor
             );
-            
             // 删除按钮
             RenderHelper.drawColoredText(
                     drawContext, textRenderer,
@@ -163,20 +178,24 @@ public class PlaylistTabPanel implements TabPanel {
             int itemY = listY + (i - playlistScrollOffset) * UIConstants.PLAYLIST_ITEM_HEIGHT;
             if (mouseY >= itemY && mouseY <= itemY + UIConstants.PLAYLIST_ITEM_HEIGHT - 2) {
                 MusicTrack track = playlist.get(i);
-                
+                // 点击分享按钮
+                String shareText = "[分享]";
+                int shareX = context.getWidth() - UIConstants.PADDING - 80;
+                if (mouseX >= shareX && mouseX <= shareX + textRenderer.getWidth(shareText)) {
+                    shareManager.shareMusic(null, track);
+                    return true;
+                }
                 // 点击收藏按钮
                 int favoriteX = context.getWidth() - UIConstants.PADDING - 35;
                 if (mouseX >= favoriteX && mouseX <= favoriteX + 15) {
                     favoriteManager.toggleFavorite(track);
                     return true;
                 }
-                
                 // 点击删除按钮
                 if (mouseX >= context.getWidth() - UIConstants.PADDING - 20) {
                     musicManager.removeFromPlaylist(i);
                     return true;
                 }
-                
                 // 点击歌曲区域，播放该歌曲
                 musicManager.playTrackAt(i);
                 return true;

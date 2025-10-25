@@ -7,6 +7,7 @@ import com.rain.gui.util.RenderHelper;
 import com.rain.manager.CategoryManager;
 import com.rain.manager.FavoriteManager;
 import com.rain.manager.MusicManager;
+import com.rain.manager.MusicShareManager;
 import com.rain.model.MusicTrack;
 import com.rain.network.MusicAPIClient;
 import com.rain.util.CollUtil;
@@ -33,6 +34,7 @@ public class SearchTabPanel implements TabPanel {
     private final MusicAPIClient apiClient;
     private final FavoriteManager favoriteManager;
     private final CategoryManager categoryManager;
+    private final MusicShareManager shareManager;
     private final Map<Integer, MusicTrack> searchResults = new HashMap<>();
     private TabPanelContext context;
     private TextRenderer textRenderer;
@@ -51,6 +53,7 @@ public class SearchTabPanel implements TabPanel {
         this.apiClient = apiClient;
         this.favoriteManager = MusicPlayerMod.getInstance().getFavoriteManager();
         this.categoryManager = MusicPlayerMod.getInstance().getCategoryManager();
+        this.shareManager = MusicPlayerMod.getInstance().getShareManager();
     }
 
     @Override
@@ -191,7 +194,7 @@ public class SearchTabPanel implements TabPanel {
     }
 
     /**
-     * 渲染操作按钮（收藏、播放、添加、分类）
+     * 渲染操作按钮（收藏、播放、添加、分类、分享）
      */
     private void renderActionButtons(DrawContext drawContext, int itemY, int mouseX, boolean isHovered, MusicTrack track) {
         int rightX = context.getWidth() - UIConstants.PADDING;
@@ -219,10 +222,20 @@ public class SearchTabPanel implements TabPanel {
                 playButtonX, itemY + 10,
                 playColor
         );
-        
+        // 分享按钮
+        String shareText = "[分享]";
+        int shareButtonX = playButtonX - textRenderer.getWidth(shareText) - 10;
+        int shareColor = (isHovered && mouseX >= shareButtonX && mouseX <= shareButtonX + textRenderer.getWidth(shareText))
+                ? UIConstants.COLOR_PRIMARY : UIConstants.COLOR_TEXT_SECONDARY;
+        RenderHelper.drawColoredText(
+                drawContext, textRenderer,
+                shareText,
+                shareButtonX, itemY + 10,
+                shareColor
+        );
         // 分类按钮
         String categoryText = "📁";  // 文件夹emoji
-        int categoryButtonX = playButtonX - 25;
+        int categoryButtonX = shareButtonX - 25;
         int categoryColor = (isHovered && mouseX >= categoryButtonX && mouseX <= categoryButtonX + 20)
                 ? UIConstants.COLOR_PRIMARY : UIConstants.COLOR_TEXT_SECONDARY;
         RenderHelper.drawColoredText(
@@ -480,8 +493,16 @@ public class SearchTabPanel implements TabPanel {
             return true;
         }
         
+        // 点击分享按钮
+        String shareText = "[分享]";
+        int shareButtonX = playButtonX - textRenderer.getWidth(shareText) - 10;
+        if (mouseX >= shareButtonX && mouseX <= shareButtonX + textRenderer.getWidth(shareText)) {
+            shareManager.shareMusic(null, track);
+            return true;
+        }
+        
         // 点击分类按钮
-        int categoryButtonX = playButtonX - 25;
+        int categoryButtonX = shareButtonX - 25;
         if (mouseX >= categoryButtonX && mouseX <= categoryButtonX + 20) {
             pendingTrack = track;
             showingCategoryPopup = true;

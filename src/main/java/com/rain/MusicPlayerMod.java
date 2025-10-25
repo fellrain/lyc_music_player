@@ -44,6 +44,8 @@ public final class MusicPlayerMod implements ClientModInitializer {
 
     private CategoryManager categoryManager;
 
+    private MusicShareManager shareManager;
+
     /**
      * 客户端初始化方法
      */
@@ -69,6 +71,8 @@ public final class MusicPlayerMod implements ClientModInitializer {
             favoriteManager = new FavoriteManager(persistenceManager);
             // 分类管理器
             categoryManager = new CategoryManager(persistenceManager);
+            // 音乐分享管理器
+            shareManager = new MusicShareManager();
             // 初始化Cookie管理器并加载数据
             CookieManager.getInstance().initialize(persistenceManager);
             // 初始化音乐管理器并加载播放列表
@@ -159,6 +163,13 @@ public final class MusicPlayerMod implements ClientModInitializer {
         return categoryManager;
     }
 
+    /**
+     * 获取音乐分享管理器
+     */
+    public MusicShareManager getShareManager() {
+        return shareManager;
+    }
+    
     /**
      * 释放所有资源
      */
