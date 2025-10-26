@@ -6,8 +6,8 @@
   "description": "落雨川的网易云音乐播放Mod",
   "authors": ["落雨川"],
   "contact": {
-    "homepage": "",
-    "sources": ""
+    "homepage": "https://github.com/fellrain",
+    "sources": "https://github.com/fellrain"
   },
   "license": "MIT",
   "environment": "client",
