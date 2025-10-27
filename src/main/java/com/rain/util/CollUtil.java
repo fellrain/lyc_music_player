@@ -5,7 +5,11 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
+ * 集合工具类
+ *
  * @author 落雨川
+ * @version 1.0
+ * @since 1.0
  */
 public class CollUtil {
 

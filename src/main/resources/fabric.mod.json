@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "lyc_music_player",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "name": "LYC Music Player",
   "description": "落雨川的网易云音乐播放Mod",
   "authors": ["落雨川"],
@@ -10,9 +10,11 @@
     "sources": "https://github.com/fellrain"
   },
   "license": "MIT",
-  "environment": "client",
+  "environment": "*",
   "entrypoints": {
-    "client": ["com.rain.MusicPlayerMod"]
+    "main": ["com.rain.common.CommonModInitializer"],
+    "client": ["com.rain.client.MusicPlayerMod"],
+    "server": ["com.rain.server.MusicPlayerServerMod"]
   },
   "mixins": [
     "Lyc_Music_Player.mixins.json"

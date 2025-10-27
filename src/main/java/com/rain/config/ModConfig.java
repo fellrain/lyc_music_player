@@ -17,7 +17,7 @@ public final class ModConfig {
     /**
      * API URL
      */
-    public static final String SEARCH_API_URL = "";
+    public static final String SEARCH_API_URL = "https://ncm.zhenxin.me";
 
     /**
      * API读取超时时间（毫秒）
@@ -27,7 +27,7 @@ public final class ModConfig {
     /**
      * API连接超时时间（毫秒）
      */
-    public static final int CONNECT_TIMEOUT = 100000;
+    public static final int CONNECT_TIMEOUT = 10000;
 
     // ========== 播放列表配置 ==========
     
@@ -47,4 +47,8 @@ public final class ModConfig {
      * 音质等级-exhigh
      */
     public static final String AUDIO_QUALITY = "exhigh";
+
+    // ========== MOD配置 ==========
+
+    public static final String MOD_ID = "lycMusicPlayer";
 }
