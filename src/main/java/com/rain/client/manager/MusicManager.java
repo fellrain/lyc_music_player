@@ -1,6 +1,6 @@
 package com.rain.client.manager;
 
-import com.rain.client.MusicPlayerMod;
+import com.rain.client.MusicPlayerClientMod;
 import com.rain.client.audio.AudioManager;
 import com.rain.common.config.ModConfig;
 import com.rain.client.model.MusicTrack;
@@ -40,7 +40,7 @@ public final class MusicManager {
         this.currentIndex = -1;
         this.playbackMode = PlaybackMode.SEQUENTIAL;
         this.random = new Random();
-        MusicPlayerMod.LOGGER.info("音乐管理器已初始化");
+        MusicPlayerClientMod.LOGGER.info("音乐管理器已初始化");
     }
 
     /**
@@ -56,19 +56,19 @@ public final class MusicManager {
      */
     public boolean addToPlaylist(MusicTrack track) {
         if (playlist.size() >= ModConfig.MAX_PLAYLIST_SIZE) {
-            MusicPlayerMod.LOGGER.warn("播放列表已满");
+            MusicPlayerClientMod.LOGGER.warn("播放列表已满");
             return false;
         }
         // 检查是否已存在（根据歌曲ID）
         for (MusicTrack existingTrack : playlist) {
             if (existingTrack.getId().equals(track.getId())) {
-                MusicPlayerMod.LOGGER.info("歌曲已在播放列表中: {}", track.getTitle());
+                MusicPlayerClientMod.LOGGER.info("歌曲已在播放列表中: {}", track.getTitle());
                 return false;
             }
         }
         playlist.add(track);
         savePlaylist();
-        MusicPlayerMod.LOGGER.info("已添加到播放列表: {}", track.getTitle());
+        MusicPlayerClientMod.LOGGER.info("已添加到播放列表: {}", track.getTitle());
         return true;
     }
 
@@ -94,7 +94,7 @@ public final class MusicManager {
         playlist.clear();
         currentIndex = -1;
         savePlaylist();
-        MusicPlayerMod.LOGGER.info("播放列表已清空");
+        MusicPlayerClientMod.LOGGER.info("播放列表已清空");
     }
 
     /**
@@ -102,7 +102,7 @@ public final class MusicManager {
      */
     public void playTrackAt(int index) {
         if (index < 0 || index >= playlist.size()) {
-            MusicPlayerMod.LOGGER.warn("无效的播放列表索引: {}", index);
+            MusicPlayerClientMod.LOGGER.warn("无效的播放列表索引: {}", index);
             return;
         }
         currentIndex = index;
@@ -116,7 +116,7 @@ public final class MusicManager {
      */
     public void playNext() {
         if (CollUtil.isEmpty(playlist)) {
-            MusicPlayerMod.LOGGER.warn("播放列表为空");
+            MusicPlayerClientMod.LOGGER.warn("播放列表为空");
             return;
         }
         switch (playbackMode) {
@@ -141,7 +141,7 @@ public final class MusicManager {
      */
     public void playPrevious() {
         if (CollUtil.isEmpty(playlist)) {
-            MusicPlayerMod.LOGGER.warn("播放列表为空");
+            MusicPlayerClientMod.LOGGER.warn("播放列表为空");
             return;
         }
         currentIndex = (currentIndex - 1 + playlist.size()) % playlist.size();
@@ -162,7 +162,7 @@ public final class MusicManager {
             currentIndex = playlist.indexOf(currentTrack);
         }
         savePlaylist();
-        MusicPlayerMod.LOGGER.info("播放列表已随机排序");
+        MusicPlayerClientMod.LOGGER.info("播放列表已随机排序");
     }
 
     /**
@@ -207,7 +207,7 @@ public final class MusicManager {
         PlaybackMode[] modes = PlaybackMode.values();
         int nextIndex = (playbackMode.ordinal() + 1) % modes.length;
         playbackMode = modes[nextIndex];
-        MusicPlayerMod.LOGGER.info("播放模式已切换为: {}", playbackMode);
+        MusicPlayerClientMod.LOGGER.info("播放模式已切换为: {}", playbackMode);
         return playbackMode;
     }
 
@@ -241,6 +241,6 @@ public final class MusicManager {
         if (!Objects.isNull(savedIndex)) {
             currentIndex = savedIndex;
         }
-        MusicPlayerMod.LOGGER.info("播放列表已从本地加载，当前索引: {}", currentIndex);
+        MusicPlayerClientMod.LOGGER.info("播放列表已从本地加载，当前索引: {}", currentIndex);
     }
 }

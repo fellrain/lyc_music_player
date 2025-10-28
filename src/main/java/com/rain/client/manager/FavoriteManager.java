@@ -1,6 +1,6 @@
 package com.rain.client.manager;
 
-import com.rain.client.MusicPlayerMod;
+import com.rain.client.MusicPlayerClientMod;
 import com.rain.client.model.MusicTrack;
 
 import java.util.*;
@@ -34,7 +34,7 @@ public final class FavoriteManager {
         this.favoriteIds = new HashSet<>(128);
         this.favoriteTracks = new LinkedHashMap<>(128);
         loadFavorites();
-        MusicPlayerMod.LOGGER.info("收藏管理器已初始化");
+        MusicPlayerClientMod.LOGGER.info("收藏管理器已初始化");
     }
 
     /**
@@ -48,7 +48,7 @@ public final class FavoriteManager {
         if (added) {
             favoriteTracks.put(track.getId(), track);
             saveFavorites();
-            MusicPlayerMod.LOGGER.info("已添加收藏: {}", track.getTitle());
+            MusicPlayerClientMod.LOGGER.info("已添加收藏: {}", track.getTitle());
         }
         return added;
     }
@@ -61,7 +61,7 @@ public final class FavoriteManager {
         if (removed) {
             favoriteTracks.remove(trackId); // 同时移除歌曲对象
             saveFavorites();
-            MusicPlayerMod.LOGGER.info("已移除收藏: {}", trackId);
+            MusicPlayerClientMod.LOGGER.info("已移除收藏: {}", trackId);
         }
         return removed;
     }
@@ -133,7 +133,7 @@ public final class FavoriteManager {
         favoriteIds.clear();
         favoriteTracks.clear();
         saveFavorites();
-        MusicPlayerMod.LOGGER.info("收藏列表已清空");
+        MusicPlayerClientMod.LOGGER.info("收藏列表已清空");
     }
 
     /**

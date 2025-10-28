@@ -1,6 +1,6 @@
 package com.rain.client.manager;
 
-import com.rain.client.MusicPlayerMod;
+import com.rain.client.MusicPlayerClientMod;
 import com.rain.client.model.MusicTrack;
 import com.rain.common.util.CollUtil;
 
@@ -37,7 +37,7 @@ public final class CategoryManager {
         this.persistenceManager = persistenceManager;
         this.categories = new LinkedHashMap<>(MAX_CATEGORIES * 2);
         loadCategories();
-        MusicPlayerMod.LOGGER.info("分类管理器已初始化");
+        MusicPlayerClientMod.LOGGER.info("分类管理器已初始化");
     }
 
     /**
@@ -45,22 +45,22 @@ public final class CategoryManager {
      */
     public boolean createCategory(String categoryName) {
         if (categoryName == null || categoryName.trim().isEmpty()) {
-            MusicPlayerMod.LOGGER.warn("分类名称不能为空");
+            MusicPlayerClientMod.LOGGER.warn("分类名称不能为空");
             return false;
         }
         // 检查是否超过数量限制
         if (categories.size() >= MAX_CATEGORIES) {
-            MusicPlayerMod.LOGGER.warn("分类数量已达到上限（{}个）", MAX_CATEGORIES);
+            MusicPlayerClientMod.LOGGER.warn("分类数量已达到上限（{}个）", MAX_CATEGORIES);
             return false;
         }
         String trimmedName = categoryName.trim();
         if (categories.containsKey(trimmedName)) {
-            MusicPlayerMod.LOGGER.warn("分类已存在: {}", trimmedName);
+            MusicPlayerClientMod.LOGGER.warn("分类已存在: {}", trimmedName);
             return false;
         }
         categories.put(trimmedName, new ArrayList<>());
         saveCategories();
-        MusicPlayerMod.LOGGER.info("已创建分类: {}", trimmedName);
+        MusicPlayerClientMod.LOGGER.info("已创建分类: {}", trimmedName);
         return true;
     }
 
@@ -70,7 +70,7 @@ public final class CategoryManager {
     public boolean deleteCategory(String categoryName) {
         if (categories.remove(categoryName) != null) {
             saveCategories();
-            MusicPlayerMod.LOGGER.info("已删除分类: {}", categoryName);
+            MusicPlayerClientMod.LOGGER.info("已删除分类: {}", categoryName);
             return true;
         }
         return false;
@@ -83,21 +83,21 @@ public final class CategoryManager {
         if (Objects.isNull(track)) {
             return false;
         }
-        MusicPlayerMod.LOGGER.warn("准备添加到分类: {},{}", categoryName, track.getTitle());
+        MusicPlayerClientMod.LOGGER.warn("准备添加到分类: {},{}", categoryName, track.getTitle());
         List<MusicTrack> tracks = categories.get(categoryName);
         if (tracks == null) {
-            MusicPlayerMod.LOGGER.warn("分类不存在: {}", categoryName);
+            MusicPlayerClientMod.LOGGER.warn("分类不存在: {}", categoryName);
             return false;
         }
         for (MusicTrack existing : tracks) {
             if (existing.getId().equals(track.getId())) {
-                MusicPlayerMod.LOGGER.warn("歌曲已在分类中: {}", track.getTitle());
+                MusicPlayerClientMod.LOGGER.warn("歌曲已在分类中: {}", track.getTitle());
                 return false;
             }
         }
         tracks.add(track);
         saveCategories();
-        MusicPlayerMod.LOGGER.info("已添加歌曲到分类 [{}]: {}", categoryName, track.getTitle());
+        MusicPlayerClientMod.LOGGER.info("已添加歌曲到分类 [{}]: {}", categoryName, track.getTitle());
         return true;
     }
 
@@ -112,7 +112,7 @@ public final class CategoryManager {
         boolean removed = tracks.removeIf(track -> track.getId().equals(trackId));
         if (removed) {
             saveCategories();
-            MusicPlayerMod.LOGGER.info("已从分类 [{}] 移除歌曲", categoryName);
+            MusicPlayerClientMod.LOGGER.info("已从分类 [{}] 移除歌曲", categoryName);
         }
         return removed;
     }
@@ -127,7 +127,7 @@ public final class CategoryManager {
         }
         MusicTrack removed = tracks.remove(index);
         saveCategories();
-        MusicPlayerMod.LOGGER.info("已从分类 [{}] 移除歌曲: {}", categoryName, removed.getTitle());
+        MusicPlayerClientMod.LOGGER.info("已从分类 [{}] 移除歌曲: {}", categoryName, removed.getTitle());
         return true;
     }
 
@@ -189,7 +189,7 @@ public final class CategoryManager {
     public void clearAllCategories() {
         categories.clear();
         saveCategories();
-        MusicPlayerMod.LOGGER.info("所有分类已清空");
+        MusicPlayerClientMod.LOGGER.info("所有分类已清空");
     }
 
     /**

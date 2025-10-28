@@ -7,7 +7,7 @@ import com.rain.client.manager.MusicManager;
 import com.rain.client.manager.ClientMusicShareManager;
 import com.rain.client.manager.PlaybackMode;
 import com.rain.client.model.MusicTrack;
-import com.rain.client.MusicPlayerMod;
+import com.rain.client.MusicPlayerClientMod;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -28,9 +28,13 @@ import java.util.Objects;
 public class PlayerTabPanel implements TabPanel {
 
     private final AudioManager audioManager;
+
     private final MusicManager musicManager;
+
     private final ClientMusicShareManager shareManager;
+
     private TabPanelContext context;
+
     private TextRenderer textRenderer;
 
     /**
@@ -39,7 +43,7 @@ public class PlayerTabPanel implements TabPanel {
     public PlayerTabPanel(AudioManager audioManager, MusicManager musicManager) {
         this.audioManager = audioManager;
         this.musicManager = musicManager;
-        this.shareManager = MusicPlayerMod.getInstance().getShareManager();
+        this.shareManager = MusicPlayerClientMod.getInstance().getShareManager();
     }
 
     @Override

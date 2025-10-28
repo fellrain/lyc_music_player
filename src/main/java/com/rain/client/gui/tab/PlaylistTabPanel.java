@@ -1,6 +1,6 @@
 package com.rain.client.gui.tab;
 
-import com.rain.client.MusicPlayerMod;
+import com.rain.client.MusicPlayerClientMod;
 import com.rain.client.gui.constants.UIConstants;
 import com.rain.client.gui.util.RenderHelper;
 import com.rain.client.manager.FavoriteManager;
@@ -39,8 +39,8 @@ public class PlaylistTabPanel implements TabPanel {
      */
     public PlaylistTabPanel(MusicManager musicManager) {
         this.musicManager = musicManager;
-        this.favoriteManager = MusicPlayerMod.getInstance().getFavoriteManager();
-        this.shareManager = MusicPlayerMod.getInstance().getShareManager();
+        this.favoriteManager = MusicPlayerClientMod.getInstance().getFavoriteManager();
+        this.shareManager = MusicPlayerClientMod.getInstance().getShareManager();
     }
 
     @Override

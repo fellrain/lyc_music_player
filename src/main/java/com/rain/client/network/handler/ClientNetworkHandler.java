@@ -1,6 +1,6 @@
 package com.rain.client.network.handler;
 
-import com.rain.client.MusicPlayerMod;
+import com.rain.client.MusicPlayerClientMod;
 import com.rain.common.network.MusicShareNotificationPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 
@@ -21,7 +21,7 @@ public class ClientNetworkHandler {
         ClientPlayNetworking.registerGlobalReceiver(
                 MusicShareNotificationPayload.ID,
                 (payload, context) -> context.client()
-                        .execute(() -> MusicPlayerMod.getInstance()
+                        .execute(() -> MusicPlayerClientMod.getInstance()
                                 .getShareManager()
                                 .handleShareNotification(payload))
         );

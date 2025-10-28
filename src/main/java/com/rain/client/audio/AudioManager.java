@@ -1,6 +1,6 @@
 package com.rain.client.audio;
 
-import com.rain.client.MusicPlayerMod;
+import com.rain.client.MusicPlayerClientMod;
 import com.rain.common.config.ModConfig;
 import com.rain.client.model.MusicTrack;
 import javazoom.jl.player.advanced.AdvancedPlayer;
@@ -59,7 +59,7 @@ public final class AudioManager {
 
     public AudioManager() {
         this.audioThread = Executors.newSingleThreadExecutor(r -> new Thread(r, THREAD_NAME));
-        MusicPlayerMod.LOGGER.info("音频管理器已使用JLayer初始化");
+        MusicPlayerClientMod.LOGGER.info("音频管理器已使用JLayer初始化");
     }
 
     public void playTrack(MusicTrack track) {
@@ -101,7 +101,7 @@ public final class AudioManager {
                 });
                 player.play();
             } catch (Exception e) {
-                MusicPlayerMod.LOGGER.error("播放结束", e);
+                MusicPlayerClientMod.LOGGER.error("播放结束", e);
                 isPlaying.set(false);
                 MinecraftClient.getInstance().execute(() -> {
                     if (!Objects.isNull(MinecraftClient.getInstance().player)) {
@@ -129,7 +129,7 @@ public final class AudioManager {
             try {
                 player.close();
             } catch (Exception e) {
-                MusicPlayerMod.LOGGER.error("关闭播放器时出错", e);
+                MusicPlayerClientMod.LOGGER.error("关闭播放器时出错", e);
             }
             player = null;
         }
@@ -137,7 +137,7 @@ public final class AudioManager {
             try {
                 currentStream.close();
             } catch (Exception e) {
-                MusicPlayerMod.LOGGER.error("关闭音频流时出错", e);
+                MusicPlayerClientMod.LOGGER.error("关闭音频流时出错", e);
             }
             currentStream = null;
         }
@@ -145,7 +145,7 @@ public final class AudioManager {
             playbackTask.cancel(true);
         }
         currentTrack = null;
-        MusicPlayerMod.LOGGER.info("播放已停止");
+        MusicPlayerClientMod.LOGGER.info("播放已停止");
     }
 
     public boolean isPlaying() {
@@ -172,7 +172,7 @@ public final class AudioManager {
     }
 
     public void shutdown() {
-        MusicPlayerMod.LOGGER.info("正在关闭音频管理器");
+        MusicPlayerClientMod.LOGGER.info("正在关闭音频管理器");
         stop();
         audioThread.shutdown();
     }

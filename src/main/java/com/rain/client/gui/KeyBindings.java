@@ -19,7 +19,7 @@ public class KeyBindings {
     private static KeyBinding openGuiKey;
 
     private static final KeyBinding.Category CATEGORY = KeyBinding.Category.create(
-        Identifier.of("lyc_music_player", "music_player")
+            Identifier.of("lyc_music_player", "music_player")
     );
 
     /**
@@ -35,6 +35,7 @@ public class KeyBindings {
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (openGuiKey.wasPressed()) {
+                // 此处会调用MusicPlayerScreen.init()方法
                 client.setScreen(new MusicPlayerScreen());
             }
         });

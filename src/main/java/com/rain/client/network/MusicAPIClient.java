@@ -1,6 +1,6 @@
 package com.rain.client.network;
 
-import com.rain.client.MusicPlayerMod;
+import com.rain.client.MusicPlayerClientMod;
 import com.rain.common.config.ModConfig;
 import com.rain.client.manager.CookieManager;
 import com.rain.client.model.Lyric;
@@ -31,7 +31,7 @@ public final class MusicAPIClient {
 
     public MusicAPIClient() {
         this.apiBaseUrl = ModConfig.SEARCH_API_URL;
-        MusicPlayerMod.LOGGER.info("MusicAPIClient 初始化 - API基础URL: {}", apiBaseUrl);
+        MusicPlayerClientMod.LOGGER.info("MusicAPIClient 初始化 - API基础URL: {}", apiBaseUrl);
     }
 
     /**
@@ -45,11 +45,11 @@ public final class MusicAPIClient {
                         ModConfig.SEARCH_RESULTS_LIMIT;
                 Map<String, String> headers = buildHeaders();
                 String responseBody = HttpUtil.get(url, headers);
-                MusicPlayerMod.LOGGER.info("搜索音乐: {}", query);
-                MusicPlayerMod.LOGGER.debug("搜索响应: {}", responseBody);
+                MusicPlayerClientMod.LOGGER.info("搜索音乐: {}", query);
+                MusicPlayerClientMod.LOGGER.debug("搜索响应: {}", responseBody);
                 return parseSearchResponse(query, responseBody);
             } catch (Exception e) {
-                MusicPlayerMod.LOGGER.error("搜索音乐失败", e);
+                MusicPlayerClientMod.LOGGER.error("搜索音乐失败", e);
                 return new SearchResult(query, new ArrayList<>(), 0);
             }
         });
@@ -63,11 +63,11 @@ public final class MusicAPIClient {
             try {
                 String url = apiBaseUrl + "/lyric/new?id=" + HttpUtil.encodeParam(trackId);
                 Map<String, String> headers = buildHeaders();
-                MusicPlayerMod.LOGGER.info("获取歌词: {}", trackId);
+                MusicPlayerClientMod.LOGGER.info("获取歌词: {}", trackId);
                 String responseBody = HttpUtil.get(url, headers);
                 return parseLyricResponse(responseBody);
             } catch (Exception e) {
-                MusicPlayerMod.LOGGER.error("获取歌词失败", e);
+                MusicPlayerClientMod.LOGGER.error("获取歌词失败", e);
                 return null;
             }
         });
@@ -92,11 +92,11 @@ public final class MusicAPIClient {
                     HttpUtil.encodeParam(ids) + "&level=" +
                     ModConfig.AUDIO_QUALITY;
             Map<String, String> headers = buildHeaders();
-            MusicPlayerMod.LOGGER.info("获取歌曲URL: {} (音质: {}", ids, ModConfig.AUDIO_QUALITY);
+            MusicPlayerClientMod.LOGGER.info("获取歌曲URL: {} (音质: {}", ids, ModConfig.AUDIO_QUALITY);
             String responseBody = HttpUtil.get(url, headers);
             return parseTrackDetailResponse(responseBody);
         } catch (Exception e) {
-            MusicPlayerMod.LOGGER.error("获取歌曲URL失败", e);
+            MusicPlayerClientMod.LOGGER.error("获取歌曲URL失败", e);
             return null;
         }
     }
@@ -119,7 +119,7 @@ public final class MusicAPIClient {
         try {
             JSONObject json = new JSONObject(responseBody);
             if (!(json.optInt("code") == API_SUCCESS_CODE)) {
-                MusicPlayerMod.LOGGER.warn("搜索API返回异常响应");
+                MusicPlayerClientMod.LOGGER.warn("搜索API返回异常响应");
                 return new SearchResult(query, new ArrayList<>(), 0);
             }
             JSONObject result = json.optJSONObject("result");
@@ -127,10 +127,10 @@ public final class MusicAPIClient {
                 return new SearchResult(query, new ArrayList<>(), 0);
             List<MusicTrack> tracks = parseTracksFromResult(result);
             int totalResults = result.optInt("songCount", tracks.size());
-            MusicPlayerMod.LOGGER.info("找到 {} 首歌曲，关键词: {}", tracks.size(), query);
+            MusicPlayerClientMod.LOGGER.info("找到 {} 首歌曲，关键词: {}", tracks.size(), query);
             return new SearchResult(query, tracks, totalResults);
         } catch (Exception e) {
-            MusicPlayerMod.LOGGER.error("解析搜索响应失败", e);
+            MusicPlayerClientMod.LOGGER.error("解析搜索响应失败", e);
             return new SearchResult(query, new ArrayList<>(), 0);
         }
     }
@@ -174,7 +174,7 @@ public final class MusicAPIClient {
             long duration = songJson.optLong("duration", 0);
             return new MusicTrack(id, name, artist, album, "", duration);
         } catch (Exception e) {
-            MusicPlayerMod.LOGGER.error("解析歌曲信息失败", e);
+            MusicPlayerClientMod.LOGGER.error("解析歌曲信息失败", e);
             return null;
         }
     }
@@ -229,7 +229,7 @@ public final class MusicAPIClient {
             }
             return resMap;
         } catch (Exception e) {
-            MusicPlayerMod.LOGGER.error("解析歌曲详情响应失败", e);
+            MusicPlayerClientMod.LOGGER.error("解析歌曲详情响应失败", e);
             return null;
         }
     }
@@ -259,7 +259,7 @@ public final class MusicAPIClient {
             
             return new Lyric(lrcContent, translationContent);
         } catch (Exception e) {
-            MusicPlayerMod.LOGGER.error("解析歌词响应失败", e);
+            MusicPlayerClientMod.LOGGER.error("解析歌词响应失败", e);
             return null;
         }
     }

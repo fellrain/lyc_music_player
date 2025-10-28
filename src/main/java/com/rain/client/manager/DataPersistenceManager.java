@@ -1,6 +1,6 @@
 package com.rain.client.manager;
 
-import com.rain.client.MusicPlayerMod;
+import com.rain.client.MusicPlayerClientMod;
 import com.rain.client.model.MusicTrack;
 import com.rain.common.util.CollUtil;
 import net.fabricmc.loader.api.FabricLoader;
@@ -43,9 +43,9 @@ public final class DataPersistenceManager {
         // 创建数据目录
         try {
             Files.createDirectories(dataDirectory);
-            MusicPlayerMod.LOGGER.info("数据目录已初始化: {}", dataDirectory);
+            MusicPlayerClientMod.LOGGER.info("数据目录已初始化: {}", dataDirectory);
         } catch (IOException e) {
-            MusicPlayerMod.LOGGER.error("创建数据目录失败", e);
+            MusicPlayerClientMod.LOGGER.error("创建数据目录失败", e);
         }
     }
 
@@ -61,10 +61,10 @@ public final class DataPersistenceManager {
             data.put("timestamp", System.currentTimeMillis());
             data.put("expiry", System.currentTimeMillis() + COOKIE_EXPIRY_MILLIS);
             writeJsonFile(COOKIE_FILE, data);
-            MusicPlayerMod.LOGGER.info("Cookie已保存，有效期至: {}",
+            MusicPlayerClientMod.LOGGER.info("Cookie已保存，有效期至: {}",
                     new Date(data.getLong("expiry")));
         } catch (Exception e) {
-            MusicPlayerMod.LOGGER.error("保存Cookie失败", e);
+            MusicPlayerClientMod.LOGGER.error("保存Cookie失败", e);
         }
     }
 
@@ -83,18 +83,18 @@ public final class DataPersistenceManager {
                     now = System.currentTimeMillis();
             // 检查是否过期
             if (expiry > 0 && now > expiry) {
-                MusicPlayerMod.LOGGER.info("Cookie已过期，已自动清理");
+                MusicPlayerClientMod.LOGGER.info("Cookie已过期，已自动清理");
                 deleteCookie();
                 return null;
             }
             String cookie = data.optString("cookie", null);
             if (cookie != null && !cookie.isEmpty()) {
-                MusicPlayerMod.LOGGER.info("Cookie已加载，剩余有效时间: {} 小时",
+                MusicPlayerClientMod.LOGGER.info("Cookie已加载，剩余有效时间: {} 小时",
                         (expiry - now) / (1000 * 60 * 60));
             }
             return cookie;
         } catch (Exception e) {
-            MusicPlayerMod.LOGGER.error("加载Cookie失败", e);
+            MusicPlayerClientMod.LOGGER.error("加载Cookie失败", e);
             return null;
         }
     }
@@ -104,7 +104,7 @@ public final class DataPersistenceManager {
      */
     public void deleteCookie() {
         deleteFile(COOKIE_FILE);
-        MusicPlayerMod.LOGGER.info("Cookie已删除");
+        MusicPlayerClientMod.LOGGER.info("Cookie已删除");
     }
 
     // ==================== 播放列表持久化 ====================
@@ -123,9 +123,9 @@ public final class DataPersistenceManager {
             }
             data.put("tracks", tracksArray);
             writeJsonFile(PLAYLIST_FILE, data);
-            MusicPlayerMod.LOGGER.info("播放列表已保存，共 {} 首歌曲", playlist.size());
+            MusicPlayerClientMod.LOGGER.info("播放列表已保存，共 {} 首歌曲", playlist.size());
         } catch (Exception e) {
-            MusicPlayerMod.LOGGER.error("保存播放列表失败", e);
+            MusicPlayerClientMod.LOGGER.error("保存播放列表失败", e);
         }
     }
 
@@ -154,10 +154,10 @@ public final class DataPersistenceManager {
             Map<String, Object> result = new HashMap<>(3);
             result.put("tracks", tracks);
             result.put("currentIndex", data.optInt("currentIndex", -1));
-            MusicPlayerMod.LOGGER.info("播放列表已加载，共 {} 首歌曲", tracks.size());
+            MusicPlayerClientMod.LOGGER.info("播放列表已加载，共 {} 首歌曲", tracks.size());
             return result;
         } catch (Exception e) {
-            MusicPlayerMod.LOGGER.error("加载播放列表失败", e);
+            MusicPlayerClientMod.LOGGER.error("加载播放列表失败", e);
             return null;
         }
     }
@@ -173,9 +173,9 @@ public final class DataPersistenceManager {
             data.put("timestamp", System.currentTimeMillis());
             data.put("favorites", new JSONArray(favoriteIds));
             writeJsonFile(FAVORITES_FILE, data);
-            MusicPlayerMod.LOGGER.info("收藏列表已保存，共 {} 首", favoriteIds.size());
+            MusicPlayerClientMod.LOGGER.info("收藏列表已保存，共 {} 首", favoriteIds.size());
         } catch (Exception e) {
-            MusicPlayerMod.LOGGER.error("保存收藏列表失败", e);
+            MusicPlayerClientMod.LOGGER.error("保存收藏列表失败", e);
         }
     }
 
@@ -196,10 +196,10 @@ public final class DataPersistenceManager {
             for (int i = 0; i < favArray.length(); i++) {
                 favorites.add(favArray.getString(i));
             }
-            MusicPlayerMod.LOGGER.info("收藏列表已加载，共 {} 首", favorites.size());
+            MusicPlayerClientMod.LOGGER.info("收藏列表已加载，共 {} 首", favorites.size());
             return favorites;
         } catch (Exception e) {
-            MusicPlayerMod.LOGGER.error("加载收藏列表失败", e);
+            MusicPlayerClientMod.LOGGER.error("加载收藏列表失败", e);
             return new HashSet<>();
         }
     }
@@ -217,9 +217,9 @@ public final class DataPersistenceManager {
             }
             data.put("tracks", tracksArray);
             writeJsonFile(FAVORITES_FILE, data);
-            MusicPlayerMod.LOGGER.info("收藏歌曲列表已保存，共 {} 首", favoriteTracks.size());
+            MusicPlayerClientMod.LOGGER.info("收藏歌曲列表已保存，共 {} 首", favoriteTracks.size());
         } catch (Exception e) {
-            MusicPlayerMod.LOGGER.error("保存收藏歌曲列表失败", e);
+            MusicPlayerClientMod.LOGGER.error("保存收藏歌曲列表失败", e);
         }
     }
 
@@ -243,10 +243,10 @@ public final class DataPersistenceManager {
                     tracks.add(track);
                 }
             }
-            MusicPlayerMod.LOGGER.info("收藏歌曲列表已加载，共 {} 首", tracks.size());
+            MusicPlayerClientMod.LOGGER.info("收藏歌曲列表已加载，共 {} 首", tracks.size());
             return tracks;
         } catch (Exception e) {
-            MusicPlayerMod.LOGGER.error("加载收藏歌曲列表失败", e);
+            MusicPlayerClientMod.LOGGER.error("加载收藏歌曲列表失败", e);
             return new ArrayList<>();
         }
     }
@@ -270,9 +270,9 @@ public final class DataPersistenceManager {
             }
             data.put("categories", categoriesObj);
             writeJsonFile(CATEGORIES_FILE, data);
-            MusicPlayerMod.LOGGER.info("分类已保存，共 {} 个分类", categories.size());
+            MusicPlayerClientMod.LOGGER.info("分类已保存，共 {} 个分类", categories.size());
         } catch (Exception e) {
-            MusicPlayerMod.LOGGER.error("保存分类失败", e);
+            MusicPlayerClientMod.LOGGER.error("保存分类失败", e);
         }
     }
 
@@ -301,10 +301,10 @@ public final class DataPersistenceManager {
                 }
                 categories.put(categoryName, tracks);
             }
-            MusicPlayerMod.LOGGER.info("分类已加载，共 {} 个分类", categories.size());
+            MusicPlayerClientMod.LOGGER.info("分类已加载，共 {} 个分类", categories.size());
             return categories;
         } catch (Exception e) {
-            MusicPlayerMod.LOGGER.error("加载分类失败", e);
+            MusicPlayerClientMod.LOGGER.error("加载分类失败", e);
             return new LinkedHashMap<>();
         }
     }
@@ -339,7 +339,7 @@ public final class DataPersistenceManager {
                     json.getLong("duration")
             );
         } catch (Exception e) {
-            MusicPlayerMod.LOGGER.error("解析音轨JSON失败", e);
+            MusicPlayerClientMod.LOGGER.error("解析音轨JSON失败", e);
             return null;
         }
     }
@@ -367,7 +367,7 @@ public final class DataPersistenceManager {
             String content = Files.readString(filePath);
             return new JSONObject(content);
         } catch (Exception e) {
-            MusicPlayerMod.LOGGER.error("读取文件失败: {}", filename, e);
+            MusicPlayerClientMod.LOGGER.error("读取文件失败: {}", filename, e);
             return null;
         }
     }
@@ -380,7 +380,7 @@ public final class DataPersistenceManager {
             Path filePath = dataDirectory.resolve(filename);
             Files.deleteIfExists(filePath);
         } catch (IOException e) {
-            MusicPlayerMod.LOGGER.error("删除文件失败: {}", filename, e);
+            MusicPlayerClientMod.LOGGER.error("删除文件失败: {}", filename, e);
         }
     }
 

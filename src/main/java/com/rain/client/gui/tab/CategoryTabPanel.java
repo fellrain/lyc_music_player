@@ -1,6 +1,6 @@
 package com.rain.client.gui.tab;
 
-import com.rain.client.MusicPlayerMod;
+import com.rain.client.MusicPlayerClientMod;
 import com.rain.client.audio.AudioManager;
 import com.rain.client.gui.constants.UIConstants;
 import com.rain.client.gui.util.RenderHelper;
@@ -41,7 +41,7 @@ public class CategoryTabPanel implements TabPanel {
     public CategoryTabPanel(AudioManager audioManager, MusicManager musicManager) {
         this.audioManager = audioManager;
         this.musicManager = musicManager;
-        this.categoryManager = MusicPlayerMod.getInstance().getCategoryManager();
+        this.categoryManager = MusicPlayerClientMod.getInstance().getCategoryManager();
     }
 
     @Override

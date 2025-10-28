@@ -1,6 +1,6 @@
 package com.rain.client.manager;
 
-import com.rain.client.MusicPlayerMod;
+import com.rain.client.MusicPlayerClientMod;
 import com.rain.client.model.Lyric;
 import com.rain.client.model.MusicTrack;
 import com.rain.client.network.MusicAPIClient;
@@ -26,7 +26,7 @@ public class LyricManager {
     public LyricManager(MusicAPIClient apiClient) {
         this.apiClient = apiClient;
         this.lyricCache = new HashMap<>();
-        MusicPlayerMod.LOGGER.info("歌词管理器已初始化");
+        MusicPlayerClientMod.LOGGER.info("歌词管理器已初始化");
     }
 
     /**
@@ -43,7 +43,7 @@ public class LyricManager {
         // 检查缓存
         if (lyricCache.containsKey(trackId)) {
             currentLyric = lyricCache.get(trackId);
-            MusicPlayerMod.LOGGER.info("从缓存加载歌词: {}", track.getTitle());
+            MusicPlayerClientMod.LOGGER.info("从缓存加载歌词: {}", track.getTitle());
             return;
         }
         // 异步获取歌词
@@ -53,10 +53,10 @@ public class LyricManager {
                 // 如果当前还在播放这首歌，更新歌词
                 if (!Objects.isNull(track) && track.getId().equals(trackId)) {
                     currentLyric = lyric;
-                    MusicPlayerMod.LOGGER.info("歌词加载成功: {}", track.getTitle());
+                    MusicPlayerClientMod.LOGGER.info("歌词加载成功: {}", track.getTitle());
                 }
             } else {
-                MusicPlayerMod.LOGGER.warn("无法获取歌词: {}", track.getTitle());
+                MusicPlayerClientMod.LOGGER.warn("无法获取歌词: {}", track.getTitle());
                 currentLyric = null;
             }
         });
@@ -81,6 +81,6 @@ public class LyricManager {
      */
     public void clearCache() {
         lyricCache.clear();
-        MusicPlayerMod.LOGGER.info("歌词缓存已清空");
+        MusicPlayerClientMod.LOGGER.info("歌词缓存已清空");
     }
 }

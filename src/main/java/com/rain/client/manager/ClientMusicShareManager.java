@@ -1,6 +1,6 @@
 package com.rain.client.manager;
 
-import com.rain.client.MusicPlayerMod;
+import com.rain.client.MusicPlayerClientMod;
 import com.rain.client.model.MusicTrack;
 import com.rain.common.network.MusicShareNotificationPayload;
 import com.rain.common.network.MusicShareRequestPayload;
@@ -33,7 +33,7 @@ public class ClientMusicShareManager {
         if (player == null || track == null) {
             return;
         }
-        MusicPlayerMod.LOGGER.info("分享音乐: {}", track.getTitle());
+        MusicPlayerClientMod.LOGGER.info("分享音乐: {}", track.getTitle());
         ClientPlayNetworking.send(new MusicShareRequestPayload(
                 track.getId(),
                 track.getTitle(),
@@ -47,7 +47,7 @@ public class ClientMusicShareManager {
      */
     public void handleShareNotification(MusicShareNotificationPayload payload) {
         pendingShares.put(payload.shareId(), payload.musicTitle());
-        MusicPlayerMod.LOGGER.info("收到来自 {} 的分享: {}", payload.senderName(), payload.musicTitle());
+        MusicPlayerClientMod.LOGGER.info("收到来自 {} 的分享: {}", payload.senderName(), payload.musicTitle());
     }
 
     /**
@@ -86,7 +86,7 @@ public class ClientMusicShareManager {
      * @param songName 歌曲名
      */
     private void searchAndPlay(String songName) {
-        MusicPlayerMod mod = MusicPlayerMod.getInstance();
+        MusicPlayerClientMod mod = MusicPlayerClientMod.getInstance();
         mod.getApiClient().searchMusic(songName).thenAccept(result ->
                 MinecraftClient.getInstance().execute(() -> {
                     if (result.isEmpty()) {
@@ -100,7 +100,7 @@ public class ClientMusicShareManager {
                             false
                     );
                 })).exceptionally(throwable -> {
-            MusicPlayerMod.LOGGER.error("搜索歌曲失败", throwable);
+            MusicPlayerClientMod.LOGGER.error("搜索歌曲失败", throwable);
             MinecraftClient.getInstance().execute(() -> {
                 MinecraftClient.getInstance().player.sendMessage(
                         Text.literal("§c搜索失败: " + throwable.getMessage()),

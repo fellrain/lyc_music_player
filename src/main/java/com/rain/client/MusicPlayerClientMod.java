@@ -22,11 +22,11 @@ import java.util.Objects;
  * @version 1.0
  * @since 1.0
  */
-public final class MusicPlayerMod implements ClientModInitializer {
+public final class MusicPlayerClientMod implements ClientModInitializer {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ModConfig.MOD_ID);
 
-    private static MusicPlayerMod instance;
+    private static MusicPlayerClientMod instance;
 
     private AudioManager audioManager;
 
@@ -105,7 +105,7 @@ public final class MusicPlayerMod implements ClientModInitializer {
     /**
      * 获取音乐模组实例
      */
-    public static MusicPlayerMod getInstance() {
+    public static MusicPlayerClientMod getInstance() {
         return instance;
     }
 

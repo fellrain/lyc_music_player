@@ -15,7 +15,9 @@
     "main": [
       "com.rain.CommonModInitializer"
     ],
-    "client": ["com.rain.client.MusicPlayerMod"],
+    "client": [
+      "com.rain.client.MusicPlayerClientMod"
+    ],
     "server": ["com.rain.server.MusicPlayerServerMod"]
   },
   "mixins": [

@@ -1,6 +1,6 @@
 package com.rain.client.mixin;
 
-import com.rain.client.MusicPlayerMod;
+import com.rain.client.MusicPlayerClientMod;
 import com.rain.client.gui.MusicHudRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -27,7 +27,7 @@ public class InGameHudMixin {
      */
     @Inject(method = "render", at = @At("TAIL"))
     private void onRender(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
-        MusicPlayerMod mod = MusicPlayerMod.getInstance();
+        MusicPlayerClientMod mod = MusicPlayerClientMod.getInstance();
         if (!Objects.isNull(mod)) {
             MusicHudRenderer hudRenderer = mod.getHudRenderer();
             if (!Objects.isNull(hudRenderer) && mod.getAudioManager().isPlaying()) {

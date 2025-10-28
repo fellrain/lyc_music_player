@@ -1,6 +1,6 @@
 package com.rain.client.gui.tab;
 
-import com.rain.client.MusicPlayerMod;
+import com.rain.client.MusicPlayerClientMod;
 import com.rain.client.audio.AudioManager;
 import com.rain.client.gui.constants.UIConstants;
 import com.rain.client.gui.util.RenderHelper;
@@ -51,9 +51,9 @@ public class SearchTabPanel implements TabPanel {
         this.audioManager = audioManager;
         this.musicManager = musicManager;
         this.apiClient = apiClient;
-        this.favoriteManager = MusicPlayerMod.getInstance().getFavoriteManager();
-        this.categoryManager = MusicPlayerMod.getInstance().getCategoryManager();
-        this.shareManager = MusicPlayerMod.getInstance().getShareManager();
+        this.favoriteManager = MusicPlayerClientMod.getInstance().getFavoriteManager();
+        this.categoryManager = MusicPlayerClientMod.getInstance().getCategoryManager();
+        this.shareManager = MusicPlayerClientMod.getInstance().getShareManager();
     }
 
     @Override
@@ -103,10 +103,10 @@ public class SearchTabPanel implements TabPanel {
                         for (int i = 0; i < tracks.size(); i++) {
                             searchResults.put(i, tracks.get(i));
                         }
-                        MusicPlayerMod.LOGGER.info("搜索完成，共 {} 首歌曲", searchResults.size());
+                        MusicPlayerClientMod.LOGGER.info("搜索完成，共 {} 首歌曲", searchResults.size());
                     }
                 })).exceptionally(throwable -> {
-            MusicPlayerMod.LOGGER.error("搜索失败", throwable);
+            MusicPlayerClientMod.LOGGER.error("搜索失败", throwable);
             return null;
         });
     }

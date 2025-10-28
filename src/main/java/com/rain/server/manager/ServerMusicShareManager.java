@@ -4,6 +4,7 @@ import com.rain.common.network.MusicShareNotificationPayload;
 import com.rain.common.network.MusicShareRequestPayload;
 import com.rain.common.network.MusicShareResponsePayload;
 import com.rain.common.util.UUIDUtil;
+import com.rain.server.model.ShareInfo;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -67,25 +68,25 @@ public class ServerMusicShareManager {
             // 不发送给自己
             if (player.getUuid().equals(sender.getUuid())) continue;
             // 发送网络数据包
-            ServerPlayNetworking.send(player, new MusicShareNotificationPayload(shareInfo.shareId, shareInfo.senderName, shareInfo.musicTitle, shareInfo.musicArtist));
+            ServerPlayNetworking.send(player, new MusicShareNotificationPayload(shareInfo.getShareId(), shareInfo.getSenderName(), shareInfo.getMusicTitle(), shareInfo.getMusicArtist()));
             // 发送可点击的聊天消息
-            Text shareMessage = Text.literal("\n§e" + shareInfo.senderName + " §f分享了一首歌曲 §e《" + shareInfo.musicTitle + "》")
-                    .append("\n§7艺术家: §f" + shareInfo.musicArtist)
+            Text shareMessage = Text.literal("\n§e" + shareInfo.getSenderName() + " §f分享了一首歌曲 §e《" + shareInfo.getMusicTitle() + "》")
+                    .append("\n§7艺术家: §f" + shareInfo.getMusicArtist())
                     .append("\n§7是否接受: ")
                     .append(Text.literal("§a[接受]").styled(style -> style
                             .withClickEvent(new ClickEvent.RunCommand(
-                                    "/music share accept " + shareInfo.shareId))
+                                    "/music share accept " + shareInfo.getShareId()))
                             .withHoverEvent(new HoverEvent.ShowText(
                                     Text.literal("§a点击接受分享")))))
                     .append(Text.literal(" "))
                     .append(Text.literal("§c[拒绝]").styled(style -> style
                             .withClickEvent(new ClickEvent.RunCommand(
-                                    "/music share reject " + shareInfo.shareId))
+                                    "/music share reject " + shareInfo.getShareId()))
                             .withHoverEvent(new HoverEvent.ShowText(Text.literal("§c点击拒绝分享")))));
             player.sendMessage(shareMessage, false);
             count++;
         }
-        LOGGER.info("已将分享 {} 广播给 {} 位玩家", shareInfo.shareId, count);
+        LOGGER.info("已将分享 {} 广播给 {} 位玩家", shareInfo.getShareId(), count);
     }
 
     /**
@@ -105,17 +106,17 @@ public class ServerMusicShareManager {
         LOGGER.info("{} {} 分享 {}", responderName, accepted ? "接受了" : "拒绝了", shareId);
         if (accepted) {
             // 接受分享：发送网络包通知客户端播放音乐
-            responder.sendMessage(Text.literal("§a已接受 §e" + shareInfo.senderName + " §a的分享，正在加载音乐..."), false);
+            responder.sendMessage(Text.literal("§a已接受 §e" + shareInfo.getSenderName() + " §a的分享，正在加载音乐..."), false);
             // 通知分享者
-            ServerPlayerEntity sender = server.getPlayerManager().getPlayer(UUID.fromString(shareInfo.senderUuid));
+            ServerPlayerEntity sender = server.getPlayerManager().getPlayer(UUID.fromString(shareInfo.getSenderUuid()));
             if (sender != null) {
-                sender.sendMessage(Text.literal("§e" + responderName + " §a接受了你分享的音乐 §e《" + shareInfo.musicTitle + "》"), false);
+                sender.sendMessage(Text.literal("§e" + responderName + " §a接受了你分享的音乐 §e《" + shareInfo.getMusicTitle() + "》"), false);
             }
         } else {
             // 拒绝分享
-            responder.sendMessage(Text.literal("§7已拒绝 §e" + shareInfo.senderName + " §7的分享"), false);
+            responder.sendMessage(Text.literal("§7已拒绝 §e" + shareInfo.getSenderName() + " §7的分享"), false);
             // 通知分享者
-            ServerPlayerEntity sender = server.getPlayerManager().getPlayer(UUID.fromString(shareInfo.senderUuid));
+            ServerPlayerEntity sender = server.getPlayerManager().getPlayer(UUID.fromString(shareInfo.getSenderUuid()));
             if (sender != null) {
                 sender.sendMessage(Text.literal("§e" + responderName + " §7拒绝了你分享的音乐"), false);
             }
@@ -130,15 +131,9 @@ public class ServerMusicShareManager {
     private void cleanExpiredCache() {
         long now = System.currentTimeMillis();
         shareCache.entrySet().removeIf(entry -> {
-            boolean expired = now - entry.getValue().timestamp > CACHE_EXPIRE_TIME;
+            boolean expired = now - entry.getValue().getTimestamp() > CACHE_EXPIRE_TIME;
             if (expired) LOGGER.debug("清除过期分享缓存: {}", entry.getKey());
             return expired;
         });
-    }
-
-    /**
-     * 分享信息记录
-     */
-    public record ShareInfo(String shareId, String senderUuid, String senderName, String musicId, String musicTitle, String musicArtist, long timestamp) {
     }
 }

@@ -1,6 +1,6 @@
 package com.rain.client.gui;
 
-import com.rain.client.MusicPlayerMod;
+import com.rain.client.MusicPlayerClientMod;
 import com.rain.client.audio.AudioManager;
 import com.rain.client.gui.constants.UIConstants;
 import com.rain.client.gui.tab.*;
@@ -9,6 +9,7 @@ import com.rain.client.network.MusicAPIClient;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 
@@ -54,9 +55,9 @@ public class MusicPlayerScreen extends Screen {
      */
     public MusicPlayerScreen() {
         super(Text.literal("小落音乐播放器"));
-        this.audioManager = MusicPlayerMod.getInstance().getAudioManager();
-        this.musicManager = MusicPlayerMod.getInstance().getMusicManager();
-        this.apiClient = MusicPlayerMod.getInstance().getApiClient();
+        this.audioManager = MusicPlayerClientMod.getInstance().getAudioManager();
+        this.musicManager = MusicPlayerClientMod.getInstance().getMusicManager();
+        this.apiClient = MusicPlayerClientMod.getInstance().getApiClient();
         initializeTabPanels();
     }
 

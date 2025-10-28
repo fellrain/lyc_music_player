@@ -4,7 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-import com.rain.client.MusicPlayerMod;
+import com.rain.client.MusicPlayerClientMod;
 import com.rain.client.audio.AudioManager;
 import com.rain.client.gui.MusicPlayerScreen;
 import com.rain.client.manager.MusicManager;
@@ -102,7 +102,7 @@ public final class MusicCommands {
         FabricClientCommandSource source = context.getSource();
         MinecraftClient client = MinecraftClient.getInstance();
         sendFeedback(source, COMMAND_INFO_COLOR + "搜索音乐: " + COMMAND_HIGHLIGHT_COLOR + query + COMMAND_INFO_COLOR + " 中...");
-        MusicAPIClient apiClient = MusicPlayerMod.getInstance().getApiClient();
+        MusicAPIClient apiClient = MusicPlayerClientMod.getInstance().getApiClient();
         apiClient.searchMusic(query).thenAccept(result ->
                 client.execute(() -> {
                     if (result.isEmpty()) {
@@ -131,7 +131,7 @@ public final class MusicCommands {
                     sendFeedback(source, "");
                     sendFeedback(source, COMMAND_MUTED_COLOR + "点击歌曲播放,或使用 " + COMMAND_HIGHLIGHT_COLOR + "/music play <编号>");
                 })).exceptionally(throwable -> {
-            MusicPlayerMod.LOGGER.info("报错了", throwable);
+            MusicPlayerClientMod.LOGGER.info("报错了", throwable);
             client.execute(() -> source.sendError(Text.literal("§c搜索失败: " + throwable.getMessage())));
             return null;
         });
@@ -141,7 +141,7 @@ public final class MusicCommands {
     private static int playMusic(CommandContext<FabricClientCommandSource> context) {
         String id = StringArgumentType.getString(context, "id");
         FabricClientCommandSource source = context.getSource();
-        AudioManager audioManager = MusicPlayerMod.getInstance().getAudioManager();
+        AudioManager audioManager = MusicPlayerClientMod.getInstance().getAudioManager();
         try {
             int index = Integer.parseInt(id);
             if (searchCache.containsKey(index)) {
@@ -161,7 +161,7 @@ public final class MusicCommands {
 
     private static int stopMusic(CommandContext<FabricClientCommandSource> context) {
         FabricClientCommandSource source = context.getSource();
-        AudioManager audioManager = MusicPlayerMod.getInstance().getAudioManager();
+        AudioManager audioManager = MusicPlayerClientMod.getInstance().getAudioManager();
         if (!audioManager.isPlaying() && !audioManager.isPaused()) {
             sendError(source, "当前没有正在播放的音乐");
             return 0;
@@ -173,7 +173,7 @@ public final class MusicCommands {
 
     private static int pauseMusic(CommandContext<FabricClientCommandSource> context) {
         FabricClientCommandSource source = context.getSource();
-        AudioManager audioManager = MusicPlayerMod.getInstance().getAudioManager();
+        AudioManager audioManager = MusicPlayerClientMod.getInstance().getAudioManager();
         if (!audioManager.isPlaying()) {
             sendError(source, "当前没有正在播放的音乐");
             return 0;
@@ -185,7 +185,7 @@ public final class MusicCommands {
 
     private static int resumeMusic(CommandContext<FabricClientCommandSource> context) {
         FabricClientCommandSource source = context.getSource();
-        AudioManager audioManager = MusicPlayerMod.getInstance().getAudioManager();
+        AudioManager audioManager = MusicPlayerClientMod.getInstance().getAudioManager();
         if (!audioManager.isPaused()) {
             sendError(source, "当前没有暂停播放的音乐");
             return 0;
@@ -200,8 +200,8 @@ public final class MusicCommands {
      */
     private static int nowPlaying(CommandContext<FabricClientCommandSource> context) {
         FabricClientCommandSource source = context.getSource();
-        AudioManager audioManager = MusicPlayerMod.getInstance().getAudioManager();
-        MusicManager musicManager = MusicPlayerMod.getInstance().getMusicManager();
+        AudioManager audioManager = MusicPlayerClientMod.getInstance().getAudioManager();
+        MusicManager musicManager = MusicPlayerClientMod.getInstance().getMusicManager();
         MusicTrack currentTrack = audioManager.getCurrentTrack();
         if (Objects.isNull(currentTrack)) {
             sendError(source, "当前没有正在播放的音乐");
@@ -245,7 +245,7 @@ public final class MusicCommands {
     private static int addToPlaylist(CommandContext<FabricClientCommandSource> context) {
         String id = StringArgumentType.getString(context, "id");
         FabricClientCommandSource source = context.getSource();
-        MusicManager musicManager = MusicPlayerMod.getInstance().getMusicManager();
+        MusicManager musicManager = MusicPlayerClientMod.getInstance().getMusicManager();
         try {
             int index = Integer.parseInt(id);
             if (searchCache.containsKey(index)) {
@@ -266,7 +266,7 @@ public final class MusicCommands {
     private static int removeFromPlaylist(CommandContext<FabricClientCommandSource> context) {
         int index = IntegerArgumentType.getInteger(context, "index") - 1;
         FabricClientCommandSource source = context.getSource();
-        MusicManager musicManager = MusicPlayerMod.getInstance().getMusicManager();
+        MusicManager musicManager = MusicPlayerClientMod.getInstance().getMusicManager();
         if (musicManager.removeFromPlaylist(index)) {
             source.sendFeedback(Text.literal("§a已从播放列表移除音轨"));
         } else {
@@ -277,7 +277,7 @@ public final class MusicCommands {
 
     private static int clearPlaylist(CommandContext<FabricClientCommandSource> context) {
         FabricClientCommandSource source = context.getSource();
-        MusicManager musicManager = MusicPlayerMod.getInstance().getMusicManager();
+        MusicManager musicManager = MusicPlayerClientMod.getInstance().getMusicManager();
         musicManager.clearPlaylist();
         source.sendFeedback(Text.literal("§a播放列表已清空"));
         return 1;
@@ -285,7 +285,7 @@ public final class MusicCommands {
 
     private static int showPlaylist(CommandContext<FabricClientCommandSource> context) {
         FabricClientCommandSource source = context.getSource();
-        MusicManager musicManager = MusicPlayerMod.getInstance().getMusicManager();
+        MusicManager musicManager = MusicPlayerClientMod.getInstance().getMusicManager();
         if (musicManager.isPlaylistEmpty()) {
             source.sendError(Text.literal("§c播放列表为空"));
             return 0;
@@ -305,7 +305,7 @@ public final class MusicCommands {
 
     private static int shufflePlaylist(CommandContext<FabricClientCommandSource> context) {
         FabricClientCommandSource source = context.getSource();
-        MusicManager musicManager = MusicPlayerMod.getInstance().getMusicManager();
+        MusicManager musicManager = MusicPlayerClientMod.getInstance().getMusicManager();
         if (musicManager.isPlaylistEmpty()) {
             source.sendError(Text.literal("§c播放列表为空"));
             return 0;
@@ -317,7 +317,7 @@ public final class MusicCommands {
 
     private static int playNext(CommandContext<FabricClientCommandSource> context) {
         FabricClientCommandSource source = context.getSource();
-        MusicManager musicManager = MusicPlayerMod.getInstance().getMusicManager();
+        MusicManager musicManager = MusicPlayerClientMod.getInstance().getMusicManager();
         if (musicManager.isPlaylistEmpty()) {
             source.sendError(Text.literal("§c播放列表为空"));
             return 0;
@@ -329,7 +329,7 @@ public final class MusicCommands {
 
     private static int playPrevious(CommandContext<FabricClientCommandSource> context) {
         FabricClientCommandSource source = context.getSource();
-        MusicManager musicManager = MusicPlayerMod.getInstance().getMusicManager();
+        MusicManager musicManager = MusicPlayerClientMod.getInstance().getMusicManager();
         if (musicManager.isPlaylistEmpty()) {
             source.sendError(Text.literal("§c播放列表为空"));
             return 0;
@@ -341,7 +341,7 @@ public final class MusicCommands {
 
     private static int cyclePlaybackMode(CommandContext<FabricClientCommandSource> context) {
         FabricClientCommandSource source = context.getSource();
-        MusicManager musicManager = MusicPlayerMod.getInstance().getMusicManager();
+        MusicManager musicManager = MusicPlayerClientMod.getInstance().getMusicManager();
         PlaybackMode newMode = musicManager.cyclePlaybackMode();
         source.sendFeedback(Text.literal("§a播放模式: §f" + newMode.getDisplayName())
                 .append(Text.literal(" " + newMode.getDescription())));
@@ -380,7 +380,7 @@ public final class MusicCommands {
      */
     private static int acceptShare(CommandContext<FabricClientCommandSource> context) {
         String shareId = StringArgumentType.getString(context, "shareId");
-        MusicPlayerMod.getInstance().getShareManager().acceptShare(shareId);
+        MusicPlayerClientMod.getInstance().getShareManager().acceptShare(shareId);
         return 1;
     }
 
@@ -389,7 +389,7 @@ public final class MusicCommands {
      */
     private static int rejectShare(CommandContext<FabricClientCommandSource> context) {
         String shareId = StringArgumentType.getString(context, "shareId");
-        MusicPlayerMod.getInstance().getShareManager().rejectShare(shareId);
+        MusicPlayerClientMod.getInstance().getShareManager().rejectShare(shareId);
         return 1;
     }
 

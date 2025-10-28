@@ -1,6 +1,6 @@
 package com.rain.client.manager;
 
-import com.rain.client.MusicPlayerMod;
+import com.rain.client.MusicPlayerClientMod;
 
 import java.util.Objects;
 
@@ -62,7 +62,7 @@ public class CookieManager {
                 persistenceManager.saveCookie(this.cookie);
             }
         }
-        MusicPlayerMod.LOGGER.info("Cookie已更新，长度: {}", this.cookie.length());
+        MusicPlayerClientMod.LOGGER.info("Cookie已更新，长度: {}", this.cookie.length());
     }
 
     /**
@@ -73,7 +73,7 @@ public class CookieManager {
         if (!Objects.isNull(persistenceManager)) {
             persistenceManager.deleteCookie();
         }
-        MusicPlayerMod.LOGGER.info("Cookie已清除");
+        MusicPlayerClientMod.LOGGER.info("Cookie已清除");
     }
 
     /**
@@ -93,7 +93,7 @@ public class CookieManager {
         String loaded = persistenceManager.loadCookie();
         if (!Objects.isNull(loaded) && !loaded.isEmpty()) {
             this.cookie = loaded;
-            MusicPlayerMod.LOGGER.info("Cookie已从本地加载");
+            MusicPlayerClientMod.LOGGER.info("Cookie已从本地加载");
         }
     }
 }
