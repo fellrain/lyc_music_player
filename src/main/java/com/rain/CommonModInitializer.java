@@ -1,4 +1,4 @@
-package com.rain.common;
+package com.rain;
 
 import com.rain.common.network.MusicShareNotificationPayload;
 import com.rain.common.network.MusicShareRequestPayload;

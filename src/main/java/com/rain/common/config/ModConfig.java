@@ -1,4 +1,4 @@
-package com.rain.config;
+package com.rain.common.config;
 
 /**
  * 音乐配置类

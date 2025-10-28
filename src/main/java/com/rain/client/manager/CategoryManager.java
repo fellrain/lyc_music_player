@@ -2,7 +2,7 @@ package com.rain.client.manager;
 
 import com.rain.client.MusicPlayerMod;
 import com.rain.client.model.MusicTrack;
-import com.rain.util.CollUtil;
+import com.rain.common.util.CollUtil;
 
 import java.util.*;
 

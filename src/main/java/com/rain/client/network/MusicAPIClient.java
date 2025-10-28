@@ -1,13 +1,13 @@
 package com.rain.client.network;
 
 import com.rain.client.MusicPlayerMod;
-import com.rain.config.ModConfig;
+import com.rain.common.config.ModConfig;
 import com.rain.client.manager.CookieManager;
 import com.rain.client.model.Lyric;
 import com.rain.client.model.MusicTrack;
 import com.rain.client.model.SearchResult;
-import com.rain.util.CollUtil;
-import com.rain.util.HttpUtil;
+import com.rain.common.util.CollUtil;
+import com.rain.common.util.HttpUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

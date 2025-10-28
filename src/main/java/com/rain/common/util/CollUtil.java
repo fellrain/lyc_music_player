@@ -1,4 +1,4 @@
-package com.rain.util;
+package com.rain.common.util;
 
 import java.util.Collection;
 import java.util.Iterator;

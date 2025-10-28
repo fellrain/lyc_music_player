@@ -1,6 +1,6 @@
 package com.rain.client.model;
 
-import com.rain.util.CollUtil;
+import com.rain.common.util.CollUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -1,6 +1,6 @@
 package com.rain.server;
 
-import com.rain.config.ModConfig;
+import com.rain.common.config.ModConfig;
 import com.rain.server.manager.ServerMusicShareManager;
 import com.rain.server.network.handler.ServerNetworkHandler;
 import net.fabricmc.api.DedicatedServerModInitializer;

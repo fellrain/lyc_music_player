@@ -3,7 +3,7 @@ package com.rain.server.manager;
 import com.rain.common.network.MusicShareNotificationPayload;
 import com.rain.common.network.MusicShareRequestPayload;
 import com.rain.common.network.MusicShareResponsePayload;
-import com.rain.util.UUIDUtil;
+import com.rain.common.util.UUIDUtil;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;

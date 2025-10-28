@@ -8,7 +8,7 @@ import com.rain.client.manager.FavoriteManager;
 import com.rain.client.manager.MusicManager;
 import com.rain.client.model.MusicTrack;
 import com.rain.client.network.MusicAPIClient;
-import com.rain.util.CollUtil;
+import com.rain.common.util.CollUtil;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 

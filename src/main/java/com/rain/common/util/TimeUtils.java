@@ -1,4 +1,4 @@
-package com.rain.util;
+package com.rain.common.util;
 
 /**
  * 时间工具类

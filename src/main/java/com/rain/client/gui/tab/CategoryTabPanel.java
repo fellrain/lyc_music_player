@@ -7,7 +7,7 @@ import com.rain.client.gui.util.RenderHelper;
 import com.rain.client.manager.CategoryManager;
 import com.rain.client.manager.MusicManager;
 import com.rain.client.model.MusicTrack;
-import com.rain.util.CollUtil;
+import com.rain.common.util.CollUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;

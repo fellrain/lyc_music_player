@@ -1,6 +1,6 @@
-package com.rain.util;
+package com.rain.common.util;
 
-import com.rain.config.ModConfig;
+import com.rain.common.config.ModConfig;
 
 import java.io.IOException;
 import java.io.InputStream;

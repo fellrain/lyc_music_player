@@ -12,7 +12,9 @@
   "license": "MIT",
   "environment": "*",
   "entrypoints": {
-    "main": ["com.rain.common.CommonModInitializer"],
+    "main": [
+      "com.rain.CommonModInitializer"
+    ],
     "client": ["com.rain.client.MusicPlayerMod"],
     "server": ["com.rain.server.MusicPlayerServerMod"]
   },

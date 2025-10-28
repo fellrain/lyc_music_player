@@ -5,7 +5,7 @@ import com.rain.client.gui.constants.UIConstants;
 import com.rain.client.manager.LyricManager;
 import com.rain.client.model.Lyric;
 import com.rain.client.model.MusicTrack;
-import com.rain.util.TimeUtils;
+import com.rain.common.util.TimeUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;

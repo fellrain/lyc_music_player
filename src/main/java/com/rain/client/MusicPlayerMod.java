@@ -6,7 +6,7 @@ import com.rain.client.gui.KeyBindings;
 import com.rain.client.gui.MusicHudRenderer;
 import com.rain.client.manager.*;
 import com.rain.client.network.MusicAPIClient;
-import com.rain.config.ModConfig;
+import com.rain.common.config.ModConfig;
 import net.fabricmc.api.ClientModInitializer;
 import com.rain.client.network.handler.ClientNetworkHandler;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
