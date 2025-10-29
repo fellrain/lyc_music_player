@@ -2,7 +2,7 @@
 
 一个基于 Fabric 的 Minecraft 音乐播放器模组，支持在线搜索和播放音乐。
 注意：在线API路径需下载源码后自行填入，返回资源需为MP3格式
-详见com.rain.config.ModConfig 及 com.rain.client.network.MusicAPIClient.searchMusic
+详见 [ModConfig](https://github.com/fellrain/lyc_music_player/blob/master/src/main/java/com/rain/common/config/ModConfig.java)
 
 ## ✨ 功能特性
 
@@ -38,7 +38,7 @@
 - **播放列表**：在播放列表标签页管理你的歌曲队列
 - **收藏选项**：歌曲列表内选择收藏
 - **分类选项**：创建歌曲分类/可创建分类并添加歌曲到指定分类
-- **设置选项**：在设置标签页调整播放模式
+- **设置选项**：在设置标签页调整播放模式和选择音乐平台API
 - **数据持久化**：数据持久化到磁盘，重启游戏不会丢失
 - **服务端分享**：服务端运行时可点击分享给所有玩家
 
@@ -63,6 +63,30 @@ cd LYC-Music-Player
 # 构建产物位于 build/libs/ 目录
 ```
 
+## 🔌 扩展开发
+
+### 添加新的音乐平台API
+
+模组采用策略设计，支持动态切换不同的音乐平台API。要添加新的音乐平台，请按以下步骤操作：
+
+1. **创建策略实现类**
+   在 `com.rain.client.network.strategy` 包中创建新的策略类，实现 `MusicApiStrategy` 接口。
+
+2. **实现接口方法**
+   实现以下必需方法：
+   - `searchMusic(String query)`: 搜索音乐
+   - `getLyric(String trackId)`: 获取歌词
+   - `getStrategyName()`: 返回策略的唯一名称
+
+3. **数据结构转换**
+   确保将平台特定的适配为统一的实体：
+   - `SearchResult`: 搜索结果
+   - `MusicTrack`: 音乐轨道
+   - `Lyric`: 歌词
+
+4. **注册策略**
+   策略通过SPI自动加载，或者在 `MusicApiStrategyFactory` 手动注册。
+
 ## 👤 作者
 
 落雨川
@@ -73,7 +97,7 @@ cd LYC-Music-Player
 
 ## 📝 更新日志
 
-### v1.6.0
+### v1.7.0
 - 初始版本发布
 - 支持基本的音乐搜索和播放功能
 - 实现播放列表管理
@@ -84,6 +108,7 @@ cd LYC-Music-Player
 - 增加实时歌词及翻译歌词
 - 增加实时歌曲进度条
 - 增加服务端分享功能
+- 增加多平台API策略支持
 
 ---
 

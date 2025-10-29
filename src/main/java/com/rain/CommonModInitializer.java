@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 通用模组初始化类
- * 用于注册客户端和服务端都需要的内容
+ * 用于注册客户端和服务端网络数据包
  *
  * @author 落雨川
  * @version 1.6

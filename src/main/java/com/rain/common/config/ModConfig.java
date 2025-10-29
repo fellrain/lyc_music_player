@@ -15,9 +15,9 @@ public final class ModConfig {
     // ========== API配置 ==========
     
     /**
-     * API URL
+     * API URL (wyy)
      */
-    public static final String SEARCH_API_URL = "";
+    public static final String NETEASE_SEARCH_API_URL = "";
 
     /**
      * API读取超时时间（毫秒）
