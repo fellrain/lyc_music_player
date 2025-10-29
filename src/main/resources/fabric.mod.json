@@ -10,7 +10,6 @@
     "sources": "https://github.com/fellrain"
   },
   "icon": "assets/lyc_music_player/music.png",
-  "license": "MIT",
   "environment": "*",
   "entrypoints": {
     "main": [
