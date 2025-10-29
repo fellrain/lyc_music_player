@@ -1,13 +1,13 @@
 package com.rain.client.gui.tab;
 
+import com.rain.client.MusicPlayerClientMod;
 import com.rain.client.audio.AudioManager;
 import com.rain.client.gui.constants.UIConstants;
 import com.rain.client.gui.util.RenderHelper;
-import com.rain.client.manager.MusicManager;
 import com.rain.client.manager.ClientMusicShareManager;
+import com.rain.client.manager.MusicManager;
 import com.rain.client.manager.PlaybackMode;
 import com.rain.client.model.MusicTrack;
-import com.rain.client.MusicPlayerClientMod;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.ButtonWidget;

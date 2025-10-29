@@ -176,47 +176,4 @@ public class MusicHudRenderer {
                 UIConstants.COLOR_TEXT_SECONDARY
         );
     }
-
-    /**
-     * 处理鼠标点击
-     *
-     * @param mouseX 鼠标X坐标
-     * @param mouseY 鼠标Y坐标
-     * @return 是否处理了点击事件
-     */
-    public boolean handleClick(double mouseX, double mouseY) {
-        // 检查是否点击了进度条
-        if (isMouseOverProgressBar(mouseX, mouseY)) {
-            // 计算点击位置对应的播放时间
-            double relativeX = mouseX - progressBarX;
-            float progress = (float) (relativeX / PROGRESS_BAR_WIDTH);
-            progress = Math.max(0, Math.min(1, progress));
-
-            long duration = audioManager.getDuration();
-            long targetPosition = (long) (duration * progress);
-
-            // TODO: 实现seek功能（JLayer限制，需要重新实现）
-            // audioManager.seek(targetPosition);
-
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * 更新鼠标悬停状态
-     */
-    public void updateHoverState(double mouseX, double mouseY) {
-        isHoveringProgressBar = isMouseOverProgressBar(mouseX, mouseY);
-    }
-
-    /**
-     * 检查鼠标是否在进度条上
-     */
-    private boolean isMouseOverProgressBar(double mouseX, double mouseY) {
-        return mouseX >= progressBarX &&
-                mouseX <= progressBarX + PROGRESS_BAR_WIDTH &&
-                mouseY >= progressBarY &&
-                mouseY <= progressBarY + PROGRESS_BAR_HEIGHT + 5; // 增加5像素点击容差
-    }
 }

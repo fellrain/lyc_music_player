@@ -7,12 +7,12 @@ import com.rain.client.gui.util.RenderHelper;
 import com.rain.client.manager.FavoriteManager;
 import com.rain.client.manager.MusicManager;
 import com.rain.client.model.MusicTrack;
-import com.rain.client.network.MusicAPIClient;
 import com.rain.common.util.CollUtil;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 收藏标签页面板
@@ -26,16 +26,14 @@ public class FavoriteTabPanel implements TabPanel {
     private final AudioManager audioManager;
     private final MusicManager musicManager;
     private final FavoriteManager favoriteManager;
-    private final MusicAPIClient apiClient;
     private TabPanelContext context;
     private TextRenderer textRenderer;
     private final List<MusicTrack> favoriteTracks = new ArrayList<>();
     private int scrollOffset = 0;
 
-    public FavoriteTabPanel(AudioManager audioManager, MusicManager musicManager, MusicAPIClient apiClient) {
+    public FavoriteTabPanel(AudioManager audioManager, MusicManager musicManager) {
         this.audioManager = audioManager;
         this.musicManager = musicManager;
-        this.apiClient = apiClient;
         this.favoriteManager = MusicPlayerClientMod.getInstance().getFavoriteManager();
     }
 

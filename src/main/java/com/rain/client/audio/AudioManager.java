@@ -1,8 +1,8 @@
 package com.rain.client.audio;
 
 import com.rain.client.MusicPlayerClientMod;
-import com.rain.common.config.ModConfig;
 import com.rain.client.model.MusicTrack;
+import com.rain.common.config.ModConfig;
 import javazoom.jl.player.advanced.AdvancedPlayer;
 import javazoom.jl.player.advanced.PlaybackEvent;
 import javazoom.jl.player.advanced.PlaybackListener;

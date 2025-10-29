@@ -9,7 +9,6 @@ import com.rain.client.network.MusicAPIClient;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 
@@ -68,8 +67,8 @@ public class MusicPlayerScreen extends Screen {
         tabPanels.put(Tab.PLAYER, new PlayerTabPanel(audioManager, musicManager));
         tabPanels.put(Tab.SEARCH, new SearchTabPanel(audioManager, musicManager, apiClient));
         tabPanels.put(Tab.PLAYLIST, new PlaylistTabPanel(musicManager));
-        tabPanels.put(Tab.FAVORITE, new FavoriteTabPanel(audioManager, musicManager, apiClient));
-        tabPanels.put(Tab.CATEGORY, new CategoryTabPanel(audioManager, musicManager));
+        tabPanels.put(Tab.FAVORITE, new FavoriteTabPanel(audioManager, musicManager));
+        tabPanels.put(Tab.CATEGORY, new CategoryTabPanel(audioManager));
         tabPanels.put(Tab.SETTINGS, new SettingsTabPanel());
     }
 
@@ -85,10 +84,9 @@ public class MusicPlayerScreen extends Screen {
      */
     private void initTabButtons() {
         Tab[] tabs = Tab.values();
-        int totalTabs = tabs.length;
-        int totalWidth = this.width - 2 * UIConstants.PADDING;
-        int tabWidth = (totalWidth - (totalTabs - 1) * UIConstants.TAB_SPACING) / totalTabs;
-        
+        int totalTabs = tabs.length,
+                totalWidth = this.width - 2 * UIConstants.PADDING,
+                tabWidth = (totalWidth - (totalTabs - 1) * UIConstants.TAB_SPACING) / totalTabs;
         for (int i = 0; i < tabs.length; i++) {
             Tab tab = tabs[i];
             int tabX = UIConstants.PADDING + i * (tabWidth + UIConstants.TAB_SPACING);
@@ -146,7 +144,7 @@ public class MusicPlayerScreen extends Screen {
         }
         // 渲染控件（按钮等）
         super.render(context, mouseX, mouseY, delta);
-        
+
         if (!Objects.isNull(currentPanel)) {
             currentPanel.renderOverlay(context, mouseX, mouseY, delta);
         }

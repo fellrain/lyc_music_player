@@ -2,8 +2,8 @@ package com.rain.client.manager;
 
 import com.rain.client.MusicPlayerClientMod;
 import com.rain.client.audio.AudioManager;
-import com.rain.common.config.ModConfig;
 import com.rain.client.model.MusicTrack;
+import com.rain.common.config.ModConfig;
 import com.rain.common.util.CollUtil;
 
 import java.util.*;
