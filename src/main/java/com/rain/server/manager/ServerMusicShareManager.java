@@ -68,7 +68,7 @@ public class ServerMusicShareManager {
             // 不发送给自己
             if (player.getUuid().equals(sender.getUuid())) continue;
             // 发送网络数据包
-            ServerPlayNetworking.send(player, new MusicShareNotificationPayload(shareInfo.getShareId(), shareInfo.getSenderName(), shareInfo.getMusicTitle(), shareInfo.getMusicArtist()));
+            ServerPlayNetworking.send(player, new MusicShareNotificationPayload(shareInfo.getShareId(), shareInfo.getMusicId(), shareInfo.getSenderName(), shareInfo.getMusicTitle(), shareInfo.getMusicArtist()));
             // 发送可点击的聊天消息
             Text shareMessage = Text.literal("\n§e" + shareInfo.getSenderName() + " §f分享了一首歌曲 §e《" + shareInfo.getMusicTitle() + "》")
                     .append("\n§7艺术家: §f" + shareInfo.getMusicArtist())

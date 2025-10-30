@@ -5,6 +5,7 @@ import com.rain.client.model.MusicTrack;
 import com.rain.common.network.MusicShareNotificationPayload;
 import com.rain.common.network.MusicShareRequestPayload;
 import com.rain.common.network.MusicShareResponsePayload;
+import com.rain.server.model.ClientCacheShareInfo;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -13,6 +14,7 @@ import net.minecraft.text.Text;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 /**
  * 音乐分享管理器（客户端）
@@ -23,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ClientMusicShareManager {
 
-    private final Map<String, String> pendingShares = new ConcurrentHashMap<>(64);
+    private final Map<String, ClientCacheShareInfo> pendingShares = new ConcurrentHashMap<>(64);
 
     /**
      * 分享当前播放的音乐给所有玩家
@@ -46,7 +48,7 @@ public class ClientMusicShareManager {
      * 处理来自服务端的分享通知
      */
     public void handleShareNotification(MusicShareNotificationPayload payload) {
-        pendingShares.put(payload.shareId(), payload.musicTitle());
+        pendingShares.put(payload.shareId(), new ClientCacheShareInfo(payload.musicId(), payload.musicTitle()));
         MusicPlayerClientMod.LOGGER.info("收到来自 {} 的分享: {}", payload.senderName(), payload.musicTitle());
     }
 
@@ -56,14 +58,14 @@ public class ClientMusicShareManager {
     public void acceptShare(String shareId) {
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         if (Objects.isNull(player)) return;
-        String musicTitle = pendingShares.remove(shareId);
-        if (musicTitle == null) {
+        ClientCacheShareInfo info = pendingShares.remove(shareId);
+        if (Objects.isNull(info)) {
             player.sendMessage(Text.literal("§c未找到该分享"), false);
             return;
         }
         ClientPlayNetworking.send(new MusicShareResponsePayload(shareId, true));
         player.sendMessage(Text.literal("§a已接受分享，正在搜索并播放音乐..."), false);
-        searchAndPlay(musicTitle);
+        searchAndPlay(info);
     }
 
     /**
@@ -83,30 +85,30 @@ public class ClientMusicShareManager {
     /**
      * 搜索并播放歌曲
      *
-     * @param songName 歌曲名
+     * @param info 歌曲ID | 歌曲名称
      */
-    private void searchAndPlay(String songName) {
+    private void searchAndPlay(ClientCacheShareInfo info) {
         MusicPlayerClientMod mod = MusicPlayerClientMod.getInstance();
-        mod.getApiClient().searchMusic(songName).thenAccept(result ->
+        Consumer<String> cs = msg -> MinecraftClient.getInstance().player.sendMessage(Text.literal(msg), false);
+        mod.getApiClient().searchMusic(info.musicTitle()).thenAccept(result ->
                 MinecraftClient.getInstance().execute(() -> {
                     if (result.isEmpty()) {
-                        MinecraftClient.getInstance().player.sendMessage(Text.literal("§c未找到歌曲: 《" + songName + "》"), false);
+                        cs.accept("§c未找到歌曲: 《" + info.musicTitle() + "》");
                         return;
                     }
-                    MusicTrack track = result.tracks().get(0);
+                    MusicTrack track = result.tracks().stream()
+                            .filter(t -> t.getId().equals(info.musicId()))
+                            .findFirst()
+                            .orElse(null);
+                    if (Objects.isNull(track)) {
+                        cs.accept("§c未找到歌曲: 《" + info.musicTitle() + "》");
+                        return;
+                    }
                     mod.getAudioManager().playTrack(track);
-                    MinecraftClient.getInstance().player.sendMessage(
-                            Text.literal("§a开始播放: §f" + track.getTitle() + " - " + track.getArtist()),
-                            false
-                    );
+                    cs.accept("§a开始播放: §f" + track.getTitle() + " - " + track.getArtist());
                 })).exceptionally(throwable -> {
             MusicPlayerClientMod.LOGGER.error("搜索歌曲失败", throwable);
-            MinecraftClient.getInstance().execute(() -> {
-                MinecraftClient.getInstance().player.sendMessage(
-                        Text.literal("§c搜索失败: " + throwable.getMessage()),
-                        false
-                );
-            });
+            MinecraftClient.getInstance().execute(() -> cs.accept("§c搜索失败: " + throwable.getMessage()));
             return null;
         });
     }

@@ -13,12 +13,13 @@ import net.minecraft.util.Identifier;
  * @version 1.6
  * @since 1.6
  */
-public record MusicShareNotificationPayload(String shareId, String senderName, String musicTitle, String musicArtist) implements CustomPayload {
+public record MusicShareNotificationPayload(String shareId,String musicId, String senderName, String musicTitle, String musicArtist) implements CustomPayload {
 
     public static final Id<MusicShareNotificationPayload> ID = new Id<>(Identifier.of("lyc_music_player", "share_notification"));
 
     public static final PacketCodec<RegistryByteBuf, MusicShareNotificationPayload> CODEC = PacketCodec.tuple(
             PacketCodecs.STRING, MusicShareNotificationPayload::shareId,
+            PacketCodecs.STRING, MusicShareNotificationPayload::musicId,
             PacketCodecs.STRING, MusicShareNotificationPayload::senderName,
             PacketCodecs.STRING, MusicShareNotificationPayload::musicTitle,
             PacketCodecs.STRING, MusicShareNotificationPayload::musicArtist,
