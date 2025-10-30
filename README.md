@@ -113,6 +113,7 @@ cd LYC-Music-Player
 - 增加实时歌曲进度条
 - 增加服务端分享功能
 - 增加多平台API策略支持
+- 增加测试案例 [Case](https://github.com/fellrain/lyc_music_player/blob/master/src/main/resources/assets/lyc_music_player/case)
 
 ---
 
