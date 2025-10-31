@@ -5,6 +5,7 @@ import com.rain.client.model.MusicTrack;
 import com.rain.common.network.MusicShareNotificationPayload;
 import com.rain.common.network.MusicShareRequestPayload;
 import com.rain.common.network.MusicShareResponsePayload;
+import com.rain.common.util.StrUtil;
 import com.rain.server.model.ClientCacheShareInfo;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
@@ -31,6 +32,10 @@ public class ClientMusicShareManager {
      * 分享当前播放的音乐给所有玩家
      */
     public void shareMusic(MusicTrack track) {
+        shareMusic(track, "");
+    }
+
+    public void shareMusic(MusicTrack track, String playerName) {
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         if (player == null || track == null) {
             return;
@@ -39,9 +44,10 @@ public class ClientMusicShareManager {
         ClientPlayNetworking.send(new MusicShareRequestPayload(
                 track.getId(),
                 track.getTitle(),
-                track.getArtist()
+                track.getArtist(),
+                playerName
         ));
-        player.sendMessage(Text.literal("§a正在分享音乐 §e《" + track.getTitle() + "》 §a给所有玩家..."), false);
+        player.sendMessage(Text.literal("§a正在分享音乐 §e《" + track.getTitle() + "》 §a给" + (StrUtil.isNotEmpty(playerName) ? playerName : "所有玩家") + "..."), false);
     }
 
     /**

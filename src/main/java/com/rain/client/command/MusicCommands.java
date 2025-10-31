@@ -6,7 +6,6 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.rain.client.MusicPlayerClientMod;
 import com.rain.client.audio.AudioManager;
-import com.rain.client.gui.MusicPlayerScreen;
 import com.rain.client.manager.MusicManager;
 import com.rain.client.manager.PlaybackMode;
 import com.rain.client.model.MusicTrack;
@@ -91,10 +90,26 @@ public final class MusicCommands {
                                         .executes(MusicCommands::acceptShare)))
                         .then(literal("reject")
                                 .then(argument("shareId", StringArgumentType.string())
-                                        .executes(MusicCommands::rejectShare))))
+                                        .executes(MusicCommands::rejectShare)))
+                        .then(literal("to")
+                                .then(argument("playerName", StringArgumentType.string())
+                                        .executes(MusicCommands::shareMusic))))
                 .then(literal("help")
                         .executes(MusicCommands::showHelp))
         );
+    }
+
+    private static int shareMusic(CommandContext<FabricClientCommandSource> context) {
+        String playerName = StringArgumentType.getString(context, "playerName");
+        AudioManager audioManager = MusicPlayerClientMod.getInstance().getAudioManager();
+        FabricClientCommandSource source = context.getSource();
+        MusicTrack currentTrack = audioManager.getCurrentTrack();
+        if (Objects.isNull(currentTrack)) {
+            sendError(source, "当前没有正在播放的音乐");
+            return 0;
+        }
+        MusicPlayerClientMod.getInstance().getShareManager().shareMusic(currentTrack, playerName);
+        return 1;
     }
 
     private static int searchMusic(CommandContext<FabricClientCommandSource> context) {
@@ -370,8 +385,7 @@ public final class MusicCommands {
         source.sendFeedback(Text.literal("§e/music playlist shuffle §7- 随机播放播放列表"));
         source.sendFeedback(Text.literal(""));
         source.sendFeedback(Text.literal("§a§l分享命令:"));
-        source.sendFeedback(Text.literal("§e/music share accept <玩家名> §7- 接受音乐分享"));
-        source.sendFeedback(Text.literal("§e/music share reject <玩家名> §7- 拒绝音乐分享"));
+        source.sendFeedback(Text.literal("§e/music share to <玩家名> §7- 分享当前播放音乐给指定玩家"));
         return 1;
     }
 
@@ -390,12 +404,6 @@ public final class MusicCommands {
     private static int rejectShare(CommandContext<FabricClientCommandSource> context) {
         String shareId = StringArgumentType.getString(context, "shareId");
         MusicPlayerClientMod.getInstance().getShareManager().rejectShare(shareId);
-        return 1;
-    }
-
-    private static int openGui(CommandContext<FabricClientCommandSource> context) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        client.execute(() -> client.setScreen(new MusicPlayerScreen()));
         return 1;
     }
 

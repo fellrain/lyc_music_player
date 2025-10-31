@@ -3,6 +3,7 @@ package com.rain.server.manager;
 import com.rain.common.network.MusicShareNotificationPayload;
 import com.rain.common.network.MusicShareRequestPayload;
 import com.rain.common.network.MusicShareResponsePayload;
+import com.rain.common.util.StrUtil;
 import com.rain.common.util.UUIDUtil;
 import com.rain.server.model.ShareInfo;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -14,9 +15,11 @@ import net.minecraft.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 
 /**
  * 服务端音乐分享管理器
@@ -47,24 +50,27 @@ public class ServerMusicShareManager {
      */
     public void handleShareRequest(ServerPlayerEntity sender, MusicShareRequestPayload payload) {
         String senderName = sender.getName().getString(),
-                shareId = UUIDUtil.generateShareId();
+                shareId = UUIDUtil.generateShareId(),
+                targetUserName = payload.targetPlayerName();
         LOGGER.info("收到来自 {} 的分享请求，歌曲: {}", senderName, payload.musicTitle());
         // 缓存分享信息
         ShareInfo shareInfo = new ShareInfo(shareId, sender.getUuidAsString(), senderName
-                , payload.musicId(), payload.musicTitle(), payload.musicArtist(), System.currentTimeMillis());
+                , payload.musicId(), payload.musicTitle(), payload.musicArtist(), payload.targetPlayerName(), System.currentTimeMillis());
         shareCache.put(shareId, shareInfo);
-        // 广播分享通知给所有玩家（除了发送者）
-        broadcastShareNotification(sender, shareInfo);
+        boolean np = StrUtil.isEmpty(targetUserName);
+        // 分享通知给所有玩家或指定玩家（除了发送者）
+        boolean shared = shareNotification(sender, shareInfo, p -> np ? Boolean.TRUE : p.getName().getString().equals(targetUserName));
         // 给发送者反馈
-        sender.sendMessage(Text.literal("§a已将音乐 §e《" + payload.musicTitle() + "》 §a分享给所有玩家"), false);
+        if (shared) sender.sendMessage(Text.literal("§a已将音乐 §e《" + payload.musicTitle() + "》 §a分享给" + (np ? "所有玩家" : targetUserName)), false);
     }
 
     /**
-     * 广播分享通知给所有玩家
+     * 分享通知给指定玩家
      */
-    private void broadcastShareNotification(ServerPlayerEntity sender, ShareInfo shareInfo) {
+    private boolean shareNotification(ServerPlayerEntity sender, ShareInfo shareInfo, Predicate<ServerPlayerEntity> t) {
         int count = 0;
-        for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+        for (ServerPlayerEntity player : getServerPlayerList()) {
+            if (!t.test(player)) continue;
             // 不发送给自己
             if (player.getUuid().equals(sender.getUuid())) continue;
             // 发送网络数据包
@@ -86,7 +92,12 @@ public class ServerMusicShareManager {
             player.sendMessage(shareMessage, false);
             count++;
         }
+        if (count == 0) {
+            sender.sendMessage(Text.literal("§c分享的玩家不存在"), false);
+            return false;
+        }
         LOGGER.info("已将分享 {} 广播给 {} 位玩家", shareInfo.getShareId(), count);
+        return true;
     }
 
     /**
@@ -135,5 +146,12 @@ public class ServerMusicShareManager {
             if (expired) LOGGER.debug("清除过期分享缓存: {}", entry.getKey());
             return expired;
         });
+    }
+
+    /**
+     * 获取服务端玩家列表
+     */
+    private List<ServerPlayerEntity> getServerPlayerList() {
+        return server.getPlayerManager().getPlayerList();
     }
 }

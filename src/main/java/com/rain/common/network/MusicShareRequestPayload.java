@@ -13,7 +13,7 @@ import net.minecraft.util.Identifier;
  * @version 1.6
  * @since 1.6
  */
-public record MusicShareRequestPayload(String musicId, String musicTitle, String musicArtist) implements CustomPayload {
+public record MusicShareRequestPayload(String musicId, String musicTitle, String musicArtist,String targetPlayerName) implements CustomPayload {
 
     public static final Id<MusicShareRequestPayload> ID = new Id<>(Identifier.of("lyc_music_player", "share_request"));
 
@@ -21,6 +21,7 @@ public record MusicShareRequestPayload(String musicId, String musicTitle, String
             PacketCodecs.STRING, MusicShareRequestPayload::musicId,
             PacketCodecs.STRING, MusicShareRequestPayload::musicTitle,
             PacketCodecs.STRING, MusicShareRequestPayload::musicArtist,
+            PacketCodecs.STRING, MusicShareRequestPayload::targetPlayerName,
             MusicShareRequestPayload::new
     );
 

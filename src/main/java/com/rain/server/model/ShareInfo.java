@@ -15,16 +15,26 @@ public class ShareInfo {
     String musicId;
     String musicTitle;
     String musicArtist;
+    String targetUser;
     long timestamp;
 
-    public ShareInfo(String shareId, String senderUuid, String senderName, String musicId, String musicTitle, String musicArtist, long timestamp) {
+    public ShareInfo(String shareId, String senderUuid, String senderName, String musicId, String musicTitle, String musicArtist, String targetUser, long timestamp) {
         this.shareId = shareId;
         this.senderUuid = senderUuid;
         this.senderName = senderName;
         this.musicId = musicId;
         this.musicTitle = musicTitle;
         this.musicArtist = musicArtist;
+        this.targetUser = targetUser;
         this.timestamp = timestamp;
+    }
+
+    public String getTargetUser() {
+        return targetUser;
+    }
+
+    public void setTargetUser(String targetUser) {
+        this.targetUser = targetUser;
     }
 
     public String getShareId() {
